@@ -1,4 +1,5 @@
 import './globals.css'
+import Providers from './providers'
 
 export const metadata = {
   title: 'prompt.dev',
@@ -10,6 +11,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  
   return (
     <html lang="en">
       <body className='bg-[#efefef]'>{children}</body>

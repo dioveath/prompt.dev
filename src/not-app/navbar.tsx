@@ -1,8 +1,10 @@
 import React from 'react'
+import { useTheme } from 'next-themes';
+import { Switch } from '@nextui-org/react';
 
 export default function Navbar({ path }: { path: string }) {
   return (
-    <nav className='flex justify-between items-center py-2 px-4 sm:px-8 md:px-16 lg:px-24 text-primary'>
+    <nav className='flex justify-between items-center py-2 px-4 sm:px-8 md:px-16 lg:px-24'>
         <div className='font-bold'> prompt.dev </div>
         <div> 
             <ul className='flex items-center gap-4 md:gap-8 lg:gap-12 font-light'>
@@ -26,7 +28,9 @@ export default function Navbar({ path }: { path: string }) {
 
 
 const NavItem = ({ children, path, mypath } : { children: React.ReactNode, path: string, mypath: string }) => {
+    const { resolvedTheme } = useTheme();
+    const textColor = resolvedTheme === 'dark' ? 'text-white' : 'text-black';
     return (
-        <li className={`cursor-pointer hover:text-blue-400 ${path === mypath ? 'text-blue-500' : 'text-black'}`}> { children } </li>
+        <li className={`cursor-pointer hover:text-blue-400 ${path === mypath ? 'text-blue-500' : textColor }`}> { children } </li>
     );
 }
