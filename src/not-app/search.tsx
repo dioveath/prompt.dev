@@ -1,14 +1,15 @@
 'use client';
 import React from 'react'
-import { Container, Row, Col, Button, Input, Card, Text } from '@nextui-org/react';
+import { Input } from '@nextui-org/react';
+import Button from '@/ui/button';
 
 export default function Search() {
   return (
-    <Container>
-        <Row>
-            <Input placeholder="What do you want to improve from AI..." css={{width: '100%'}}/>
-            <Button auto flat color={'primary'}>Search</Button>
-        </Row>
-    </Container>        
+    <div className='flex gap-2 sm:px-8 md:px-16 lg:px-24'>
+        <Input placeholder="What do you want to improve from AI..." css={{width: '100%'}}/>
+        <Button> Search </Button>
+    </div>
+    
+
   )
 }
