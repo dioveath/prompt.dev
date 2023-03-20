@@ -6,7 +6,6 @@ async function main() {
   await prisma.user.create({
     data: {
       email: "test@gmail.com",
-      password: "test123",
       name: "Test",
       avatar: "https://avatars.githubusercontent.com/u/6702424?v=4",
       jobTitle: "Software Engineer",
