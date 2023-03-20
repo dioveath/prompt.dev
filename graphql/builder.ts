@@ -16,7 +16,23 @@ builder.queryType({
     fields: (t) => ({
         ok: t.boolean({
             resolve: () => true
+        }),
+        me: t.prismaField({
+            type: "User",
+            resolve: async (query, root, args, ctx, info) => {
+                const { user } = await ctx;
+                if(!user) throw new Error("Not authenticated");
+
+                return prisma.user.findUnique({
+                    where: {
+                        email: user.email
+                    }
+                })
+            }
         })        
     })
 });
 
+
+
+// builder.mutationType({}) 

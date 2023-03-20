@@ -9,6 +9,7 @@ builder.prismaObject('User', {
         name: t.exposeString('name', { nullable: true }),
         avatar: t.exposeString('avatar', { nullable: true }),
         jobTitle: t.exposeString('jobTitle', { nullable: true }),
+        posts: t.relation('posts'),
         createdAt: t.expose('createdAt', { type: 'String' }),
         updatedAt: t.expose('updatedAt', { type: 'String' }),
     })
