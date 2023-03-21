@@ -1,6 +1,9 @@
 import React from 'react'
 import PostCard from '@/components/globals/postcard'
 import Container from '@/ui/container';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import { Post } from '@prisma/client';
 
 const mockPosts = [
   {
@@ -20,10 +23,24 @@ const mockPosts = [
   }    
 ];
 
+const postsQuery = gql`
+  query {
+    posts {
+      title
+      content
+      votes
+    }
+  }
+`
+
 export default function ThreadsList() {
+  const { data, loading, error } = useQuery(postsQuery);  
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
     <div className='flex flex-wrap gap-2'>
-      { mockPosts.map((post, index) => <PostCard key={index} {...post} />) }    
+      { data.posts.map((post: Post) => <PostCard key={post.id} {...post} />) }
     </div>
   )
 }

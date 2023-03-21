@@ -35,7 +35,9 @@ export default function Navbar({ path }: { path: string }) {
             { user &&  
             <>
               <NavItem path={path} mypath='profile'>
+                <Link href={'/profile'}>
                   <Button> Profile </Button>
+                </Link>
               </NavItem>
               <NavItem path={path} mypath='logout'>
                 <Link href={'/api/auth/logout'}>
