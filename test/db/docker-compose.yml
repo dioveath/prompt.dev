@@ -1,0 +1,18 @@
+## NOTE: This is a work in progress.
+## It is not understood how the port binding is working.
+
+networks:
+  my-mongo-cluster:
+    driver: bridge
+
+services:
+  mongo1:
+    hostname: mongo1
+    image: mongo
+    container_name: mongo1
+    networks:
+      - my-mongo-cluster
+    ports:
+      - "27017:27017"
+    restart: always
+    entrypoint: mongod --replSet rs0 --bind_ip_all

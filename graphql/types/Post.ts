@@ -35,7 +35,7 @@ builder.mutationField("createPost", (t) =>
       ais: t.arg.idList(),
     },
     resolve: async (_query, _parent, args, ctx, _info) => {
-      const { user } = ctx;
+      const { user } = await ctx;
       if (!user) throw new Error("Not authenticated");
 
       const { title, content, published, skills, ais } = args;
@@ -45,12 +45,20 @@ builder.mutationField("createPost", (t) =>
 
       if (!dbUser) throw new Error("User not found");
 
+      console.log(skills);
+
       return await prisma.post.create({
         data: {
           title,
           content,
           published,
           authorId: dbUser.id,
+          skills: { create: [...(skills ? skills.map((skId) => ({ 
+            skill: { connect: { id: skId } }
+           })) : []) ] },
+           ais: { create: [...(ais ? ais.map((aiId) => ({
+            ai: { connect: { id: aiId } }
+            })) : []) ] },
         },
       });
     },

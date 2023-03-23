@@ -23,11 +23,11 @@ builder.queryType({
                 const { user } = await ctx;
                 if(!user) throw new Error("Not authenticated");
 
-                return prisma.user.findUnique({
+                return await prisma.user.findUnique({
                     where: {
                         email: user.email
                     }
-                })
+                });
             }
         })        
     })

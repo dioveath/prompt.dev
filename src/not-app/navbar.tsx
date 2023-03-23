@@ -25,7 +25,7 @@ export default function Navbar({ path }: { path: string }) {
                 </Link>
               </NavItem>
               <NavItem path={path} mypath='signup'>
-                <Link href={'/api/auth/signup'}>
+                <Link href={'/api/auth/login'}>
                   <div className='border-[2px] border-blue-400 px-8 py-1 rounded-full'> Sign Up </div>
                 </Link>
               </NavItem>            

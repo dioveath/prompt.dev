@@ -9,3 +9,12 @@ builder.prismaObject('AI', {
         updatedAt: t.expose('updatedAt', { type: 'String' }),
     }),
 });
+
+builder.queryField('ais', (t) =>
+    t.prismaField({
+        type: ['AI'],
+        resolve: async (query, _parent, _args, _ctx, _info) => {
+            return await prisma.aI.findMany({ ...query });
+        },
+    })
+);
