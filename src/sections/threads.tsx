@@ -26,9 +26,22 @@ const mockPosts = [
 const postsQuery = gql`
   query {
     posts {
+      id
       title
       content
       votes
+      skills {
+        skill {
+          id
+          title
+        }
+      }
+      ais {
+        ai {
+          id
+          title
+        }
+      }
     }
   }
 `
@@ -38,9 +51,21 @@ export default function ThreadsList() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
+  const curatedPosts = data.posts.map((post: any) => {
+    const { skills, ais } = post;
+    const curatedSkills = skills.map((skill: any) => skill.skill);
+    const curatedAis = ais.map((ai: any) => ai.ai);
+    return {
+      ...post,
+      skills: curatedSkills,
+      ais: curatedAis
+    }
+  })
+  
+
   return (
     <div className='flex flex-wrap gap-2'>
-      { data.posts.map((post: Post) => <PostCard key={post.id} {...post} />) }
+      { curatedPosts.map((post: any) => <PostCard key={post.id} {...post} />) }
     </div>
   )
 }

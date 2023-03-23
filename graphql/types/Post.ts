@@ -53,7 +53,7 @@ builder.mutationField("createPost", (t) =>
           authorId: dbUser.id,
           skills: !skills || skills.length === 0 ? undefined : {
             createMany: {
-              data: skills?.map((skillId) => ({ skillId })),
+              data: skills.map((skillId) => ({ skillId })),
             },
           },
           ais: !ais || ais.length === 0 ? undefined : {
@@ -64,5 +64,87 @@ builder.mutationField("createPost", (t) =>
         },
       });
     },
+  })
+);
+
+
+builder.mutationField("updatePost", (t) =>
+  t.prismaField({
+    type: "Post",
+    args: {
+      id: t.arg.id({ required: true }),
+      title: t.arg.string(),
+      content: t.arg.string(),
+      votes: t.arg.int(),
+      published: t.arg.boolean(),
+      skills: t.arg.idList(),
+      ais: t.arg.idList(),
+    },
+    resolve: async (_query, _parent, args, ctx, _info) => {
+      const { user } = await ctx;
+      if (!user) throw new Error("Not authenticated");
+
+      const { id, title, content, votes, published, skills, ais } = args;
+      if (id === undefined) throw new Error("No id provided");
+
+      const dbUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+
+      if(dbUser?.id !== (await prisma.post.findUnique({ where: { id: id.toString() } }))?.authorId) 
+        throw new Error("Not authorized");
+
+      return await prisma.post.update({
+        where: { id: id.toString() },
+        data: {
+          title: title || undefined,
+          content: content || undefined,
+          votes: votes || undefined,
+          published: published || undefined,
+          skills: !skills || skills.length === 0 ? undefined : {
+            createMany: {
+              data: skills.map((skillId) => ({ skillId })),
+            },
+          },
+          ais: !ais || ais.length === 0 ? undefined : {
+            createMany: {
+              data: ais?.map((aiId) => ({ aiId })),
+            },
+          }
+        },
+      });
+    }
+  })
+);
+
+builder.mutationField("updatePostVote", (t) =>
+  t.prismaField({
+    type: "Post",
+    args: {
+      id: t.arg.id({ required: true }),
+      votes: t.arg.int({ required: true }),
+    },
+    resolve: async (_query, _parent, args, ctx, _info) => {
+      const { user } = await ctx;
+      if (!user) throw new Error("Not authenticated");
+
+      const { id, votes } = args;
+      if (id === undefined) throw new Error("No id provided");
+
+      
+
+      const dbUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+
+      if(!dbUser) throw new Error("User not found");
+
+      return await prisma.post.update({
+        where: { id: id.toString() },
+        data: {
+          votes: typeof votes === 'number' ? votes : undefined,
+        },
+      });
+    }
   })
 );

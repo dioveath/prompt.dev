@@ -6,6 +6,9 @@ const button = cva("cursor-pointer px-8 py-1 rounded-full", {
       primary: "bg-purple-600 text-white",
       secondary: "bg-gray-200 text-black",
     },
+    isLoading: {
+      true: "opacity-50 cursor-not-allowed animate-pulse",
+    }    
   },
   defaultVariants: {
     intent: "primary",
