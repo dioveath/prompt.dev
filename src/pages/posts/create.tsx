@@ -1,18 +1,26 @@
 import React from 'react'
-import { useForm, SubmitHandler } from "react-hook-form";
-import Container from '@/ui/container';
-import Button from '@/ui/button';
 import { useMutation, useQuery } from '@apollo/client';
 import toast from 'react-hot-toast';
 import { gql } from '@apollo/client';
+
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import Container from '@/ui/container';
+import Button from '@/ui/button';
+
+import dynamic from 'next/dynamic';
+const Select = dynamic(import('react-select'), { ssr: false });
 
 const createPostQuery = gql`
     mutation($title: String!, $content: String!, $skills: [ID!], $ais: [ID!]) {
         createPost(title: $title, content: $content, skills: $skills, ais: $ais) {
             title
             content
-            skills
-            ais
+            skills {
+                id
+            },
+            ais {
+                id
+            }
         }
     }
 `;
@@ -38,25 +46,25 @@ const getAIsQuery = gql`
 type CreatePostProps = {
     title: string;
     content: string;
-    skills?: string[];
-    ais?: string[];
+    skills?: [];
+    ais?: [];
 };
 
 export default function CreatePost() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<CreatePostProps>();
+  const { control, register, handleSubmit, watch, formState: { errors } } = useForm<CreatePostProps>();
   const [createPost, { data, loading, error }] = useMutation(createPostQuery);
   const { data: skillsData, loading: skillsLoading, error: skillsError } = useQuery(getSkillsQuery);
   const { data: aiData, loading: aiLoading, error: aiError } = useQuery(getAIsQuery);
 
   const onSubmit: SubmitHandler<CreatePostProps> = data => {
-    const { title, content } = data;
-    const variables = { title, content, skills: data.skills, ais: data.ais};
+    const { title, content, skills, ais } = data;
+    const variables = { title, content, skills: skills?.map((skill: any) => skill.id), ais: aiData?.ais.map((ai: any) => ai.id)};
 
     try {
       toast.promise(createPost({ variables }), {
         loading: 'Creating Post 🔃🔃',
         success: 'Post Created 🎉🎉',
-        error: 'Error Creating Post 😥😥, from promise'
+        error: 'Error Creating Post 😥😥, from promise' + error
       });
     } catch (error) {
       toast.error('Error Creating Post 😥😥');
@@ -71,18 +79,35 @@ export default function CreatePost() {
             {errors.title && <span className='text-xs text-red-500'>This field is required</span>}
             <input {...register("content", { required: true })} className='bg-gray-300 py-2 px-4'/>
             {errors.content && <span className='text-xs text-red-500'>This field is required</span>}
-            <select {...register("skills")} className='bg-gray-300 py-2 px-4'>
-                <option value="">Select a skill</option>
-                {skillsData?.skills.map((skill: any) => (
-                    <option key={skill.id} value={skill.id}>{skill.title}</option>
-                ))}
-            </select>
-            <select {...register("ais")} className='bg-gray-300 py-2 px-4'>
-                <option value="">Select an AI</option>
-                {aiData?.ais.map((ai: any) => (
-                    <option key={ai.id} value={ai.id}>{ai.title}</option>
-                ))}
-            </select>
+
+            <Controller
+                name="skills"
+                control={control}
+                render={({ field }) => (
+                    <Select
+                        {...field}
+                        options={skillsData?.skills}
+                        isMulti={true}
+                        getOptionLabel={(option: any) => option.title }
+                        getOptionValue={(option: any) => option.id}
+                    />
+                )}
+            />
+
+            <Controller
+                name="ais"
+                control={control}
+                render={({ field }) => (
+                    <Select
+                        {...field}
+                        options={aiData?.ais}
+                        isMulti={true}
+                        getOptionLabel={(option: any) => option.title }
+                        getOptionValue={(option: any) => option.id}
+                    />
+                )}
+            />
+
             <Button type="submit"> Create Post </Button>
         </form>
     </Container>

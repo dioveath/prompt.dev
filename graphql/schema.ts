@@ -1,9 +1,9 @@
 import "./types/User";
-import "./types/Post";
 import "./types/Skill";
-import "./types/SkillsOnPosts";
 import "./types/AI";
+import "./types/SkillsOnPosts";
 import "./types/AIsOnPosts";
+import "./types/Post";
 
 import { builder } from "./builder";
 

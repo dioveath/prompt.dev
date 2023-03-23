@@ -25,7 +25,7 @@ export default function CreateSkillPage() {
             toast.promise(createSkill({ variables }), {
                 loading: 'Creating Skill 🔃🔃',
                 success: 'Skill Created 🎉🎉',
-                error: 'Error Creating Skill 😥😥'
+                error: (error) => 'Error Creating Skill 😥😥: ' + error.message,
             });
         } catch (error) {
             toast.error('Error Creating Skill 😥😥');

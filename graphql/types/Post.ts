@@ -45,20 +45,22 @@ builder.mutationField("createPost", (t) =>
 
       if (!dbUser) throw new Error("User not found");
 
-      console.log(skills);
-
       return await prisma.post.create({
         data: {
           title,
           content,
           published,
           authorId: dbUser.id,
-          skills: { create: [...(skills ? skills.map((skId) => ({ 
-            skill: { connect: { id: skId } }
-           })) : []) ] },
-           ais: { create: [...(ais ? ais.map((aiId) => ({
-            ai: { connect: { id: aiId } }
-            })) : []) ] },
+          skills: !skills || skills.length === 0 ? undefined : {
+            createMany: {
+              data: skills?.map((skillId) => ({ skillId })),
+            },
+          },
+          ais: !ais || ais.length === 0 ? undefined : {
+            createMany: {
+              data: ais?.map((aiId) => ({ aiId })),
+            },
+          }
         },
       });
     },
