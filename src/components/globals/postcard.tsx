@@ -1,8 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Post } from "@prisma/client";
+import Link from "next/link";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { BiUpvote, BiDownvote } from "react-icons/bi";
+import { SlBadge } from "react-icons/sl";
+import { GiRobotHelmet } from "react-icons/gi";
+import Chip from "./chip";
 
 
 const updateVoteMutation = gql`
@@ -50,40 +53,48 @@ export default function PostCard(props: PostCardProps) {
     } catch (error){
       toast.error("Error Updating Votes 😥😥");
     }
-    console.log("upvoted!");
   };
 
   return (
-    <div className="w-full flex justify-between cursor-pointer">
-      <div className="flex flex-col items-center bg-gray-200 py-4 px-6">
-        <BiUpvote
-          className="text-2xl hover:text-green-500"
-          onClick={() => onVote(VoteType.UPVOTE)}
-        />
-        <p className="text-sm font-bold"> {votes} </p>
-        <BiDownvote
-          className="text-2xl hover:text-red-500"
-          onClick={() => onVote(VoteType.DOWNVOTE) }
-        />
-      </div>
-      <div className="flex-1 border-2 border-l-transparent border-black py-2 px-2">
-        <p className="font-bold text-2xl mb-1"> {title} </p>
-        <p className="leading-4"> {content} </p>
-        <div>
-          <p className="font-semibold mb-1"> Skills </p>
-          <ul className="flex gap-2">
-            {skills.map((skill: any) => (
-              <li key={skill.id} className='text-xs mb-0 px-4 bg-purple-500 text-white'> {skill.title} </li>
-            ))}
-          </ul>
-          <p className="font-semibold mb-1"> AIs </p>
-          <ul className="flex gap-2">
-            {ais.map((ai: any) => (
-              <li key={ai.id} className='text-xs mb-0 px-4 bg-purple-500 text-white'> {ai.title} </li>
-            ))}
-          </ul>
+      <div className="w-full flex justify-between cursor-pointer shadow-lg rounded-lg overflow-clip">
+        <div className="flex flex-col items-center bg-gray-200 py-4 px-6">
+          <BiUpvote
+            className="text-2xl hover:text-green-500"
+            onClick={() => onVote(VoteType.UPVOTE)}
+          />
+          <p className="text-sm font-bold"> {votes} </p>
+          <BiDownvote
+            className="text-2xl hover:text-red-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              onVote(VoteType.DOWNVOTE)
+             }}
+          />
         </div>
+        <Link href={`posts/${id}`} className="flex-1 py-2 px-2">
+          <p className="font-bold text-2xl mb-1"> {title} </p>
+          <p className="leading-4"> {content} </p>
+          <div className="flex gap-4">
+            <div>
+              <p className="font-semibold mb-1"> Skills </p>
+              <ul className="flex gap-2">
+                {skills.map((skill: any) => (
+                  <Chip key={skill.id} label={skill.title} intent="primary" icon={<SlBadge color="yellow"/>}/>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <p className="font-semibold mb-1"> AIs </p>
+              <ul className="flex gap-2">
+                {ais.map((ai: any) => (
+                  <Chip key={ai.id} label={ai.title} intent="secondary" icon={<GiRobotHelmet/>}/>
+                ))}
+              </ul>
+            </div>
+            
+          </div>
+        </Link>
       </div>
-    </div>
   );
 }

@@ -10,11 +10,18 @@ export default function Navbar({ path }: { path: string }) {
 
   return (
     <nav className='flex justify-between items-center py-2 px-4 sm:px-8 md:px-16 lg:px-24'>
-        <div className='font-bold cursor-pointer'> prompt.dev </div>
+        <div className='font-bold cursor-pointer'> 
+          <Link href={"/"}>
+            prompters.dev        
+          </Link>
+        </div>
         <ul className='flex items-end gap-4 md:gap-8 lg:gap-12'>
             <NavItem path={path} mypath='home'> Home </NavItem>
             <NavItem path={path} mypath='skills'> Skills </NavItem>
             <NavItem path={path} mypath='ais'> AIs </NavItem>
+            <NavItem path={path} mypath='posts'> Posts </NavItem>            
+            <NavItem path={path} mypath='marketplace'> Market Place </NavItem>
+            <NavItem path={path} mypath='jobs'> Jobs </NavItem>
             <NavItem path={path} mypath='about'> About </NavItem>
 
             { !user && 
