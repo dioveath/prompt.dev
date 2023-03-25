@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
             email,
             name,
-            avatar: picture
+            avatar: picture             
         },
     });
 

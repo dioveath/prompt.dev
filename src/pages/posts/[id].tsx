@@ -141,6 +141,9 @@ export default function Post({ post }: PostProps) {
             </div>
           </div>
 
+          <div>
+            Comments
+          </div>
         </div>
       </div>
       <Footer/>
