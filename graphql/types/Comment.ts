@@ -13,6 +13,26 @@ builder.prismaObject("Comment", {
     }),
 });
 
+builder.queryField("comments", (t) =>
+    t.prismaField({
+        type: ["Comment"],
+        args: {
+            postId: t.arg.id({ required: true }),
+        },
+        resolve: async (query, _parent, args, _ctx, _info) => {
+            const { postId } = args;
+            if (postId === undefined) throw new Error("No postId provided");
+            return await prisma.comment.findMany({
+                ...query,
+                where: {
+                    postId: postId.toString(),
+                },
+            });
+        },
+    })
+);
+
+
 builder.mutationField("createComment", (t) =>
     t.prismaField({
         type: "Comment",
@@ -38,13 +58,6 @@ builder.mutationField("createComment", (t) =>
                     authorId: dbUser.id,
                     postId: postId?.toString() || undefined,
                     parentId: parentId?.toString() || undefined,
-                },
-                include: {
-                    replies: {
-                        include: {
-                            replies: true
-                        }
-                    }
                 }
             });
         }

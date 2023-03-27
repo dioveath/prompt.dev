@@ -26,6 +26,36 @@ builder.queryField("posts", (t) =>
   })
 );
 
+builder.queryField("post", (t) =>
+  t.prismaField({
+    type: "Post",
+    args: {
+      id: t.arg.id({ required: true }),
+    },
+    resolve: async (_query, _parent, args, _ctx, _info) => {
+      const { id } = args;
+      if (id === undefined) throw new Error("No id provided");
+      const post =  await prisma.post.findUnique({ 
+        where: { id: id.toString() },
+        include: {
+          comments: {
+            orderBy: {
+              createdAt: "desc",
+            },
+            include: {
+              author: true,
+              parent: true,
+            },
+          },          
+        }        
+      });
+
+      console.log(post);
+      return post;
+    },
+  })
+);
+
 builder.mutationField("createPost", (t) =>
   t.prismaField({
     type: "Post",

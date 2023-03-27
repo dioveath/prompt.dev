@@ -59,7 +59,7 @@ export default function CreatePost() {
   const onSubmit: SubmitHandler<CreatePostProps> = data => {
     const { title, content, skills, ais } = data;
     const variables = { title, content, skills: skills?.map((skill: any) => skill.id), ais: ais?.map((ai: any) => ai.id)};
-
+    
     try {
       toast.promise(createPost({ variables }), {
         loading: 'Creating Post 🔃🔃',

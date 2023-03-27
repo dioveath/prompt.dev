@@ -36,8 +36,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
                 <button onClick={() => setFormOpen(!isFormOpen)}> reply </button>
             </div>
         </div>
-        {isFormOpen && <AddComment comment={comment} setFormOpen={setFormOpen}/>}
-
+        {isFormOpen && <AddComment comment={{ id: comment.id, postId: comment.post.id }} setFormOpen={setFormOpen}/>}
         <div className="w-full flex justify-start">
             <div className="min-h-full w-10 border-l-2 border-gray-200"/>
             <div className="w-full">

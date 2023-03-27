@@ -16,12 +16,12 @@ const button = cva("cursor-pointer px-8 py-1 rounded-full", {
 });
 
 export interface ButtonProps
-  extends React.HTMLAttributes<HTMLButtonElement>,
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof button> {}
 
-export default function Button({ children, intent, ...props }: ButtonProps) {
+export default function Button({ children, intent, type, ...props }: ButtonProps) {
   return (
-    <button className={button({ intent })} {...props} type="button">
+    <button className={button({ intent })} {...props} type={type || "button"}>
       {children}
     </button>
   );

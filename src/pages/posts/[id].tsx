@@ -1,11 +1,11 @@
 import Navbar from "@/not-app/navbar";
 import Container from "@/ui/container";
 import { GetServerSideProps } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SuperJSON from "superjson";
 import Image from "next/image";
 import Footer from "@/sections/footer";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import toast from "react-hot-toast";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { useRefresh } from "@/hooks/useRefresh";
@@ -23,6 +23,33 @@ type CommentExtended = Comment & {
   author: { name: string; avatar: string };
   post: { id: string };
 };
+
+const getPostCommentsQuery = gql`
+  query($id: ID!) {
+    post(id: $id) {
+      id
+      comments {
+        id
+        content
+        votes
+        author {
+          id
+          name
+          avatar
+        }
+        post {
+          id
+        }
+        replies {
+          id          
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
 
 const updateVoteMutation = gql`
   mutation($id: ID!, $votes: Int!) {
@@ -46,10 +73,40 @@ export type { CommentExtended };
 
 
 export default function Post({ post }: PostProps) {
-  const { id, title, content, votes, skills, ais, author, comments, groupComments } = SuperJSON.parse<any>(post);
+  const { id, title, content, votes: argVotes, skills, ais, author } = SuperJSON.parse<any>(post);
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const refresh = useRefresh();
+
+  const [votes, setVotes] = useState<number>(argVotes);
+  const [rootComments, setRootComments] = useState<CommentExtended[]>([]);
+  const [groupComments, setGroupComments] = useState<any>({});
+  const { data: queryData } = useQuery(getPostCommentsQuery, { variables: { id: id } });
+  
+  useEffect(() => {
+    if(!queryData) return;
+
+    const mappedComments: any = {};
+    const comments = queryData.post.comments;
+
+    comments.forEach((comment: any) => {
+      mappedComments[comment.id] = comment;
+    });
+
+    const groupComments: any = {};
+    let rootComments: any = queryData.post.comments;
+
+    comments.forEach((comment: any) => {
+      const replies = comment.replies.map((reply: any) => mappedComments[reply.id]);
+      rootComments = rootComments.filter((rootComment: any) => { 
+        return replies.filter((reply: any) => reply.id === rootComment.id).length === 0;
+      });
+      groupComments[comment.id] = [ ...replies ];
+    });
+
+    setGroupComments(groupComments);
+    setRootComments(rootComments);
+  }, [queryData]);
 
   const onVote = async (voteType: VoteType) => {
     let newVotes = votes;
@@ -60,13 +117,12 @@ export default function Post({ post }: PostProps) {
     }
 
     try {
-      await toast.promise(updatePost({ variables: { id: id, votes: newVotes } }), {
+      const updatedPost = await toast.promise(updatePost({ variables: { id: id, votes: newVotes } }), {
         loading: "Updating Votes 🔃🔃",
         success: "Votes Updated! 🎉",
         error: "Error Updating Votes 😥😥, from promise" + error,
       });
-
-      refresh();
+      setVotes(newVotes);
     } catch (error){
       toast.error("Error Updating Votes 😥😥");
     }
@@ -155,9 +211,9 @@ export default function Post({ post }: PostProps) {
           <div className="w-full flex flex-col justify-start">
             <h1 className="text-2xl font-bold my-4">Comments</h1>
             <div className="w-full flex flex-col gap-4">
-              { formOpen && <AddComment comment={{ postId: id }} setFormOpen={setFormOpen} /> }              
               <CommentContext.Provider value={{ groupComments }} >
-                {comments?.map((comment: any) => (
+                { formOpen && <AddComment comment={{ postId: id }} setFormOpen={setFormOpen} /> }
+                {rootComments?.map((comment: any) => (
                   <CommentCard key={comment.id} comment={comment} />
                 ))}
               </CommentContext.Provider>
@@ -204,18 +260,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     post.skills = post?.skills.map((skill: any) => skill.skill);
     post.ais = post?.ais.map((ai: any) => ai.ai);
-
-    // group comments by parent
-    const comments = post?.comments.reduce((acc: any, comment: any) => {
-      const parent = comment.parentId || "root";
-      acc[parent] = acc[parent] || [];
-      acc[parent].push(comment);
-      return acc;      
-    }, {});
-
-    post.comments = post?.comments.filter((comment: any) => !comment.parentId);
-    post.groupComments = comments;
-
   } catch (error) {
     console.log(error);
   }

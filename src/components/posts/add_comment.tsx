@@ -2,7 +2,8 @@ import React, { useRef } from 'react'
 import Button from '@/ui/button'
 import { gql, useMutation } from '@apollo/client';
 import { useRefresh } from '@/hooks/useRefresh';
-import { CommentExtended } from '@/pages/posts/[id]';
+import { CommentExtended, useCommentContext } from '@/pages/posts/[id]';
+import apolloClient from '../../../lib/apollo';
 
 type AddCommentProps = {
     comment: { postId: string, id?: string }
@@ -14,7 +15,11 @@ const addCommentMutation = gql`
         createComment(content: $content, postId: $postId, parentId: $parentId) {
             id
             content
+            votes
+            createdAt
+            updatedAt
             author {
+                id
                 name
                 avatar
             }
@@ -28,18 +33,17 @@ const addCommentMutation = gql`
 export default function AddComment({ comment, setFormOpen }: AddCommentProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [addComment, { data, loading, error }] = useMutation(addCommentMutation);
-    const refresh = useRefresh();
 
     const onAddComment = async (content: string) => {
         if(!content) return;
+        
         try {
-            await addComment({ variables: { content: content, postId: comment.postId, parentId: comment.id } });
+            const addedComment = await addComment({ variables: { content: content, postId: comment.postId, parentId: comment.id } });
             setFormOpen(false);
             textareaRef.current!.value = "";
+            apolloClient.refetchQueries({ include: "active" });
         } catch (error) {
             console.log(error);
-        } finally {
-            refresh();
         }
   };
 

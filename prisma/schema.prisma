@@ -65,8 +65,8 @@ model Comment {
   postId    String   @db.ObjectId
   votes     Int      @default(0)
 
-  parent   Comment?  @relation(name: "replies", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   replies  Comment[] @relation(name: "replies")
+  parent   Comment?  @relation(name: "replies", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   parentId String?   @db.ObjectId
 }
 
