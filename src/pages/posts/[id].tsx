@@ -1,7 +1,7 @@
 import Navbar from "@/not-app/navbar";
 import Container from "@/ui/container";
 import { GetServerSideProps } from "next";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 import Image from "next/image";
 import Footer from "@/sections/footer";
@@ -10,10 +10,18 @@ import toast from "react-hot-toast";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { useRefresh } from "@/hooks/useRefresh";
 import { FacebookShareButton, FacebookIcon, InstapaperShareButton, InstapaperIcon, TwitterShareButton, TwitterIcon } from "react-share";
-import { useRouter } from "next/router";
+import CommentCard from "@/components/posts/comment";
+import { Comment } from "@prisma/client";
+import AddComment from "@/components/posts/add_comment";
+import Button from "@/ui/button";
 
 type PostProps = {
   post: string;
+};
+
+type CommentExtended = Comment & {
+  author: { name: string; avatar: string };
+  post: { id: string };
 };
 
 const updateVoteMutation = gql`
@@ -31,9 +39,16 @@ enum VoteType {
   DOWNVOTE = "DOWNVOTE",
 }
 
+
+const CommentContext = React.createContext<any>({});
+export const useCommentContext = () => React.useContext<any>(CommentContext);
+export type { CommentExtended };
+
+
 export default function Post({ post }: PostProps) {
-  const { id, title, content, votes, skills, ais, author } = SuperJSON.parse<any>(post);
+  const { id, title, content, votes, skills, ais, author, comments, groupComments } = SuperJSON.parse<any>(post);
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
+  const [formOpen, setFormOpen] = useState<boolean>(false);
   const refresh = useRefresh();
 
   const onVote = async (voteType: VoteType) => {
@@ -55,10 +70,7 @@ export default function Post({ post }: PostProps) {
     } catch (error){
       toast.error("Error Updating Votes 😥😥");
     }
-
   };
-
-
 
   return (
     <Container>
@@ -91,7 +103,6 @@ export default function Post({ post }: PostProps) {
                   </p>
                 ))}
               </div>
-              
           </div>
 
           <div className="w-full">
@@ -114,7 +125,7 @@ export default function Post({ post }: PostProps) {
           />
             </div>
             <div>
-              <button> comment </button>
+              <button onClick={(e) => setFormOpen(true)}> Comment </button>
             </div>
 
             <div className="flex gap-2">
@@ -141,8 +152,16 @@ export default function Post({ post }: PostProps) {
             </div>
           </div>
 
-          <div>
-            Comments
+          <div className="w-full flex flex-col justify-start">
+            <h1 className="text-2xl font-bold my-4">Comments</h1>
+            <div className="w-full flex flex-col gap-4">
+              { formOpen && <AddComment comment={{ postId: id }} setFormOpen={setFormOpen} /> }              
+              <CommentContext.Provider value={{ groupComments }} >
+                {comments?.map((comment: any) => (
+                  <CommentCard key={comment.id} comment={comment} />
+                ))}
+              </CommentContext.Provider>
+            </div>
           </div>
         </div>
       </div>
@@ -153,7 +172,7 @@ export default function Post({ post }: PostProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
-  let post = undefined;
+  let post: any = undefined;
 
   try {
     post = await prisma.post.findUnique({
@@ -171,12 +190,32 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             ai: true,
           },
         },
+        comments: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            author: true,
+          },
+        },
         author: true,
       },
     });
 
     post.skills = post?.skills.map((skill: any) => skill.skill);
     post.ais = post?.ais.map((ai: any) => ai.ai);
+
+    // group comments by parent
+    const comments = post?.comments.reduce((acc: any, comment: any) => {
+      const parent = comment.parentId || "root";
+      acc[parent] = acc[parent] || [];
+      acc[parent].push(comment);
+      return acc;      
+    }, {});
+
+    post.comments = post?.comments.filter((comment: any) => !comment.parentId);
+    post.groupComments = comments;
+
   } catch (error) {
     console.log(error);
   }

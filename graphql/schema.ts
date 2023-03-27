@@ -4,6 +4,7 @@ import "./types/AI";
 import "./types/SkillsOnPosts";
 import "./types/AIsOnPosts";
 import "./types/Post";
+import "./types/Comment";
 
 import { builder } from "./builder";
 

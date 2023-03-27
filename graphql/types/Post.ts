@@ -7,9 +7,11 @@ builder.prismaObject("Post", {
     content: t.exposeString("content", { nullable: true }),
     author: t.relation("author", { type: "User" }),
     votes: t.exposeInt("votes"),
+    slug: t.exposeString("slug"),
     published: t.exposeBoolean("published"),
     skills: t.relation("skills", { type: "SkillsOnPosts" }),
     ais: t.relation("ais", { type: "AIsOnPosts" }),
+    comments: t.relation("comments", { type: "Comment" }),
     createdAt: t.expose("createdAt", { type: "String" }),
     updatedAt: t.expose("updatedAt", { type: "String" }),
   }),
@@ -130,8 +132,6 @@ builder.mutationField("updatePostVote", (t) =>
 
       const { id, votes } = args;
       if (id === undefined) throw new Error("No id provided");
-
-      
 
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email },

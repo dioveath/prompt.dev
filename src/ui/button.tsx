@@ -21,7 +21,7 @@ export interface ButtonProps
 
 export default function Button({ children, intent, ...props }: ButtonProps) {
   return (
-    <button className={button({ intent })} {...props}>
+    <button className={button({ intent })} {...props} type="button">
       {children}
     </button>
   );
