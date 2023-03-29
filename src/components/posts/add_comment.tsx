@@ -33,10 +33,10 @@ const addCommentMutation = gql`
 export default function AddComment({ comment, setFormOpen }: AddCommentProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [addComment, { data, loading, error }] = useMutation(addCommentMutation);
-
+    
     const onAddComment = async (content: string) => {
         if(!content) return;
-        
+
         try {
             const addedComment = await addComment({ variables: { content: content, postId: comment.postId, parentId: comment.id } });
             setFormOpen(false);

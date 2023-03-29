@@ -38,6 +38,7 @@
     "slate": "^0.91.4",
     "slate-history": "^0.86.0",
     "slate-react": "^0.92.0",
+    "slugify": "^1.6.6",
     "superjson": "^1.12.2",
     "typescript": "^4.9.5"
   },

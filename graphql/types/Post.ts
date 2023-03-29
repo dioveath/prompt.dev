@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import { builder } from "../builder";
 
 builder.prismaObject("Post", {
@@ -50,7 +51,6 @@ builder.queryField("post", (t) =>
         }        
       });
 
-      console.log(post);
       return post;
     },
   })
@@ -63,6 +63,7 @@ builder.mutationField("createPost", (t) =>
       title: t.arg.string({ required: true }),
       content: t.arg.string({ required: true }),
       published: t.arg.boolean({ defaultValue: false, required: true }),
+      slug: t.arg.string(),
       skills: t.arg.idList(),
       ais: t.arg.idList(),
     },
@@ -70,17 +71,23 @@ builder.mutationField("createPost", (t) =>
       const { user } = await ctx;
       if (!user) throw new Error("Not authenticated");
 
-      const { title, content, published, skills, ais } = args;
+      const { title, content, slug, published, skills, ais } = args;
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
 
       if (!dbUser) throw new Error("User not found");
 
+      const generatedSlug = slug || slugify(title, { lower: true, strict: true });
+
+      const found = await prisma.post.findUnique({ where: { slug: generatedSlug } });
+      if(found) throw new Error("Slug already exists"); 
+
       return await prisma.post.create({
         data: {
           title,
           content,
+          slug: generatedSlug,
           published,
           authorId: dbUser.id,
           skills: !skills || skills.length === 0 ? undefined : {

@@ -17,3 +17,6 @@ Write me an excellent short description for prompters.dev. It should be concise,
 - Voting system, Views System
 - Comment/Replies
 - Sharing post in social media (SEO friendly)
+- Add slug
+- Post media content
+- Username System

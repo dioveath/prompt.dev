@@ -11,7 +11,7 @@ type CommentCardProps = {
 export default function CommentCard({ comment }: CommentCardProps) {
   const { groupComments } = useCommentContext();
   const [isFormOpen, setFormOpen] = useState(false);
-  const replyComments = groupComments[comment.id] || [];
+  const replyComments = groupComments ? groupComments[comment.id] || [] : [];
 
   return (
     <>

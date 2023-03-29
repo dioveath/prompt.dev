@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 
 import SlateEditor from "@/sections/posts/slateeditor";
 import SlateView from "@/sections/posts/slateview";
+import { redirect } from "next/dist/server/api-utils";
 
 
 type PostProps = {
@@ -230,15 +231,43 @@ export default function Post({ post }: PostProps) {
   );
 }
 
+function isValid(id: string | undefined) {
+  if(!id) return false;
+	// simply match the id from regular expression
+	if (id.match(/^[0-9a-fA-F]{24}$/)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
   let post: any = undefined;
+  
+  if(!params?.id) return { notFound: true };
+
+
+  let id = params?.id?.toString();
+  let where: any = { id: id };
+  if(isValid(id)) {
+    const post = await prisma.post.findUnique({ where: { id: id } });
+    if(!post) return { notFound: true };
+    if(post.slug) {
+      return {
+        redirect: {
+          destination: `/posts/${post.slug}`,
+          permanent: true,        
+        }
+      }      
+    }
+  } else {
+    where = { slug: id };
+  }
 
   try {
     post = await prisma.post.findUnique({
-      where: {
-        id: params?.id?.toString(),
-      },
+      where: where,
       include: {
         skills: {
           include: {
