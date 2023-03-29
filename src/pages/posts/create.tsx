@@ -8,7 +8,10 @@ import Container from '@/ui/container';
 import Button from '@/ui/button';
 
 import dynamic from 'next/dynamic';
+
 const Select = dynamic(import('react-select'), { ssr: false });
+const SlateEditor = dynamic(import('@/sections/posts/slateeditor'), { ssr: false });
+
 
 const createPostQuery = gql`
     mutation($title: String!, $content: String!, $skills: [ID!], $ais: [ID!]) {
@@ -57,9 +60,11 @@ export default function CreatePost() {
   const { data: aiData, loading: aiLoading, error: aiError } = useQuery(getAIsQuery);
 
   const onSubmit: SubmitHandler<CreatePostProps> = data => {
-    const { title, content, skills, ais } = data;
+    const { title, skills, ais } = data;
+
+    const content = localStorage.getItem('content');
     const variables = { title, content, skills: skills?.map((skill: any) => skill.id), ais: ais?.map((ai: any) => ai.id)};
-    
+
     try {
       toast.promise(createPost({ variables }), {
         loading: 'Creating Post 🔃🔃',
@@ -75,10 +80,14 @@ export default function CreatePost() {
     <Container>
         <h1 className='text-2xl font-bold'>Create Post</h1>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2'>
+            
             <input {...register("title", { required: true })} className='bg-gray-300 py-2 px-4'/>
             {errors.title && <span className='text-xs text-red-500'>This field is required</span>}
-            <input {...register("content", { required: true })} className='bg-gray-300 py-2 px-4'/>
-            {errors.content && <span className='text-xs text-red-500'>This field is required</span>}
+
+            <SlateEditor/>
+
+            {/* <input {...register("content", { required: true })} className='bg-gray-300 py-2 px-4'/>
+            {errors.content && <span className='text-xs text-red-500'>This field is required</span>} */}
 
             <Controller
                 name="skills"

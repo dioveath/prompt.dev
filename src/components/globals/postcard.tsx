@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
-import React from "react";
+import React, { useMemo } from "react";
 import { toast } from "react-hot-toast";
 import { BiUpvote, BiDownvote } from "react-icons/bi";
 import { SlBadge } from "react-icons/sl";
@@ -35,6 +35,17 @@ enum VoteType {
 export default function PostCard(props: PostCardProps) {
   const { id, title, content, votes, skills, ais } = props;
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
+
+  const summary = useMemo(() => {
+    const parsedContent = JSON.parse(content);
+    let summary = "";
+    parsedContent.forEach((node: any) => {
+      if (node.type === "paragraph") {
+        summary += node.children[0].text;
+      }
+    });
+    return summary.length >= 496 ? summary.substring(0, 496) + "..." : summary;
+  }, [content]);
 
    const onVote = (voteType: VoteType) => {
     let newVotes = votes;
@@ -73,7 +84,7 @@ export default function PostCard(props: PostCardProps) {
         </div>
         <Link href={`posts/${id}`} className="flex-1 py-2 px-2">
           <p className="font-bold text-2xl mb-1"> {title} </p>
-          <p className="leading-4"> {content} </p>
+          <p className="leading-4 text-ellipses"> {summary} </p>
           <div className="flex gap-4">
             <div>
               <p className="font-semibold mb-1"> Skills </p>

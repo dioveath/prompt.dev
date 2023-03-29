@@ -13,7 +13,11 @@ import { FacebookShareButton, FacebookIcon, InstapaperShareButton, InstapaperIco
 import CommentCard from "@/components/posts/comment";
 import { Comment } from "@prisma/client";
 import AddComment from "@/components/posts/add_comment";
-import Button from "@/ui/button";
+import dynamic from "next/dynamic";
+
+import SlateEditor from "@/sections/posts/slateeditor";
+import SlateView from "@/sections/posts/slateview";
+
 
 type PostProps = {
   post: string;
@@ -162,7 +166,7 @@ export default function Post({ post }: PostProps) {
           </div>
 
           <div className="w-full">
-            <p className="text-sm text-left">{content}</p>
+            <SlateView content={content}/>
           </div>
 
           <div className="w-full flex justify-between items-center gap-4">
