@@ -2,18 +2,19 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import React, { useMemo } from "react";
 import { toast } from "react-hot-toast";
-import { BiUpvote, BiDownvote } from "react-icons/bi";
+import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
 import { SlBadge } from "react-icons/sl";
 import { GiRobotHelmet } from "react-icons/gi";
 import Chip from "./chip";
 
 
 const updateVoteMutation = gql`
-  mutation($id: ID!, $votes: Int!) {
-    updatePostVote(id: $id, votes: $votes){
+  mutation($id: ID!) {
+    updatePostVote(id: $id){
       id
       title
-      votes
+      votesCount
+      meVoted
     }
   }
 `;
@@ -22,18 +23,14 @@ type PostCardProps = {
   id: number;
   title: string;
   content: string;
-  votes: number;
+  votesCount: number;
+  meVoted: boolean;
   skills: [];
   ais: [];
 };
 
-enum VoteType {
-  UPVOTE = "UPVOTE",
-  DOWNVOTE = "DOWNVOTE",
-}
-
 export default function PostCard(props: PostCardProps) {
-  const { id, title, content, votes, skills, ais } = props;
+  const { id, title, content, votesCount, meVoted, skills, ais } = props;
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
 
   const summary = useMemo(() => {
@@ -41,22 +38,15 @@ export default function PostCard(props: PostCardProps) {
     let summary = "";
     parsedContent.forEach((node: any) => {
       if (node.type === "paragraph") {
-        summary += node.children[0].text;
+        summary += " " + node.children[0].text;
       }
     });
     return summary.length >= 496 ? summary.substring(0, 496) + "..." : summary;
   }, [content]);
 
-   const onVote = (voteType: VoteType) => {
-    let newVotes = votes;
-    if(voteType === VoteType.UPVOTE) {
-      newVotes++;
-    } else {
-      newVotes--;
-    }
-    
+   const onVote = () => {
     try {
-      toast.promise(updatePost({ variables: { id: id, votes: newVotes } }), {
+      toast.promise(updatePost({ variables: { id: id } }), {
         loading: "Updating Votes 🔃🔃",
         success: "Votes Updated! 🎉",
         error: "Error Updating Votes 😥😥, from promise" + error,
@@ -69,18 +59,12 @@ export default function PostCard(props: PostCardProps) {
   return (
       <div className="w-full flex justify-between cursor-pointer shadow-lg rounded-lg overflow-clip">
         <div className="flex flex-col items-center bg-gray-200 py-4 px-6">
-          <BiUpvote
-            className="text-2xl hover:text-green-500"
-            onClick={() => onVote(VoteType.UPVOTE)}
-          />
-          <p className="text-sm font-bold"> {votes} </p>
-          <BiDownvote
-            className="text-2xl hover:text-red-500"
-            onClick={(e) => {
-              e.stopPropagation();
-              onVote(VoteType.DOWNVOTE)
-             }}
-          />
+          <div onClick={onVote} className="flex flex-col items-center gap-1">
+          { meVoted ? 
+          <TbArrowBigUpLinesFilled className="text-2xl text-green-500"/>
+          : <TbArrowBigUpLines className="text-2xl hover:text-green-500"/> }
+          <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
+          </div>
         </div>
         <Link href={`posts/${id}`} className="flex-1 py-2 px-2">
           <p className="font-bold text-2xl mb-1"> {title} </p>

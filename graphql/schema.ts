@@ -6,6 +6,8 @@ import "./types/AIsOnPosts";
 import "./types/AICategory";
 import "./types/Post";
 import "./types/Comment";
+import "./types/VotesOnPosts";
+import "./types/VotesOnComments";
 
 import { builder } from "./builder";
 

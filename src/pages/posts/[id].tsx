@@ -7,17 +7,17 @@ import Image from "next/image";
 import Footer from "@/sections/footer";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import toast from "react-hot-toast";
-import { BiDownvote, BiUpvote } from "react-icons/bi";
-import { useRefresh } from "@/hooks/useRefresh";
+import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
+
 import { FacebookShareButton, FacebookIcon, InstapaperShareButton, InstapaperIcon, TwitterShareButton, TwitterIcon } from "react-share";
 import CommentCard from "@/components/posts/comment";
 import { Comment } from "@prisma/client";
 import AddComment from "@/components/posts/add_comment";
-import dynamic from "next/dynamic";
 
-import SlateEditor from "@/sections/posts/slateeditor";
+
+
 import SlateView from "@/sections/posts/slateview";
-import { redirect } from "next/dist/server/api-utils";
+
 
 
 type PostProps = {
@@ -33,10 +33,11 @@ const getPostCommentsQuery = gql`
   query($id: ID!) {
     post(id: $id) {
       id
+      votesCount
+      meVoted
       comments {
         id
         content
-        votes
         author {
           id
           name
@@ -57,20 +58,14 @@ const getPostCommentsQuery = gql`
 
 
 const updateVoteMutation = gql`
-  mutation($id: ID!, $votes: Int!) {
-    updatePostVote(id: $id, votes: $votes){
+  mutation($id: ID!) {
+    updatePostVote(id: $id){
       id
-      title
-      votes
+      votesCount
+      meVoted
     }
   }
 `;
-
-enum VoteType {
-  UPVOTE = "UPVOTE",
-  DOWNVOTE = "DOWNVOTE",
-}
-
 
 const CommentContext = React.createContext<any>({});
 export const useCommentContext = () => React.useContext<any>(CommentContext);
@@ -78,16 +73,15 @@ export type { CommentExtended };
 
 
 export default function Post({ post }: PostProps) {
-  const { id, title, content, votes: argVotes, skills, ais, author } = SuperJSON.parse<any>(post);
-  const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
+  const { id, title, content, skills, ais, votesCount: propVoteCount, author } = SuperJSON.parse<any>(post);
+    const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const refresh = useRefresh();
 
-  const [votes, setVotes] = useState<number>(argVotes);
   const [rootComments, setRootComments] = useState<CommentExtended[]>([]);
   const [groupComments, setGroupComments] = useState<any>({});
-  const { data: queryData } = useQuery(getPostCommentsQuery, { variables: { id: id } });
-  
+  const { data: queryData, loading: getPostLoading, error: getPostError } = useQuery(getPostCommentsQuery, { variables: { id: id } });
+  const { votesCount, meVoted } = queryData?.post || { votesCount: propVoteCount, meVoted: false };
+
   useEffect(() => {
     if(!queryData) return;
 
@@ -113,21 +107,13 @@ export default function Post({ post }: PostProps) {
     setRootComments(rootComments);
   }, [queryData]);
 
-  const onVote = async (voteType: VoteType) => {
-    let newVotes = votes;
-    if(voteType === VoteType.UPVOTE) {
-      newVotes++;
-    } else {
-      newVotes--;
-    }
-
+  const onVote = async () => {
     try {
-      const updatedPost = await toast.promise(updatePost({ variables: { id: id, votes: newVotes } }), {
+      const updatedPost = await toast.promise(updatePost({ variables: { id: id } }), {
         loading: "Updating Votes 🔃🔃",
         success: "Votes Updated! 🎉",
         error: "Error Updating Votes 😥😥, from promise" + error,
       });
-      setVotes(newVotes);
     } catch (error){
       toast.error("Error Updating Votes 😥😥");
     }
@@ -146,7 +132,7 @@ export default function Post({ post }: PostProps) {
             />
             <div>
               <h1 className="text-2xl font-bold">{title}</h1>
-              <p className="text-sm text-gray-500">{author?.name}</p>
+              <article className="text-sm text-gray-500">{author?.name}</article>
             </div>
           </div>
           <div className="w-full flex justify-start items-center gap-4">
@@ -171,19 +157,11 @@ export default function Post({ post }: PostProps) {
           </div>
 
           <div className="w-full flex justify-between items-center gap-4">
-            <div className="flex flex-row gap-2">
-            <BiUpvote
-            className="text-2xl hover:text-green-500"
-            onClick={() => onVote(VoteType.UPVOTE)}
-          />
-          <p className="text-sm font-bold"> {votes} </p>
-          <BiDownvote
-            className="text-2xl hover:text-red-500"
-            onClick={(e) => {
-              e.stopPropagation();
-              onVote(VoteType.DOWNVOTE)
-             }}
-          />
+            <div onClick={onVote} className="flex flex-row items-center gap-2 cursor-pointer">
+              { meVoted ? 
+              <TbArrowBigUpLinesFilled className="text-2xl text-green-500"/>
+              : <TbArrowBigUpLines className="text-2xl hover:text-green-500"/> }
+              <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
             </div>
             <div>
               <button onClick={(e) => setFormOpen(true)}> Comment </button>
@@ -269,11 +247,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     post = await prisma.post.findUnique({
       where: where,
       include: {
+        _count: { select: { votes: true } },
         skills: {
           include: {
             skill: true,
           },
         },
+        votes: true,
         ais: {
           include: {
             ai: true,
@@ -293,6 +273,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     post.skills = post?.skills.map((skill: any) => skill.skill);
     post.ais = post?.ais.map((ai: any) => ai.ai);
+    post.votesCount = post._count.votes;
   } catch (error) {
     console.log(error);
   }

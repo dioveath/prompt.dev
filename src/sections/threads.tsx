@@ -10,7 +10,8 @@ const postsQuery = gql`
       id
       title
       content
-      votes
+      votesCount
+      meVoted
       skills {
         skill {
           id

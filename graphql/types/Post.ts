@@ -7,7 +7,28 @@ builder.prismaObject("Post", {
     title: t.exposeString("title"),
     content: t.exposeString("content", { nullable: true }),
     author: t.relation("author", { type: "User" }),
-    votes: t.exposeInt("votes"),
+    votes: t.relation("votes", { type: "VotesOnPosts" }),
+    votesCount: t.relationCount("votes"),
+    meVoted: t.boolean({
+      select: {
+        votes: true
+      },
+      resolve: async (parent, _args, ctx, _info) => {
+        const { user } = await ctx;
+        if (!user) return false;
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+        if (!dbUser) return false;
+        const votes = await prisma.votesOnPosts.findMany({
+          where: {
+            postId: parent.id,
+            userId: dbUser.id
+          }
+        });
+        return votes.length > 0;
+      }
+    }),
     slug: t.exposeString("slug"),
     published: t.exposeBoolean("published"),
     skills: t.relation("skills", { type: "SkillsOnPosts" }),
@@ -39,6 +60,7 @@ builder.queryField("post", (t) =>
       const post =  await prisma.post.findUnique({ 
         where: { id: id.toString() },
         include: {
+          _count: { select: { votes: true } },
           comments: {
             orderBy: {
               createdAt: "desc",
@@ -46,6 +68,7 @@ builder.queryField("post", (t) =>
             include: {
               author: true,
               parent: true,
+              votes: true,
             },
           },          
         }        
@@ -114,7 +137,6 @@ builder.mutationField("updatePost", (t) =>
       id: t.arg.id({ required: true }),
       title: t.arg.string(),
       content: t.arg.string(),
-      votes: t.arg.int(),
       published: t.arg.boolean(),
       skills: t.arg.idList(),
       ais: t.arg.idList(),
@@ -123,7 +145,7 @@ builder.mutationField("updatePost", (t) =>
       const { user } = await ctx;
       if (!user) throw new Error("Not authenticated");
 
-      const { id, title, content, votes, published, skills, ais } = args;
+      const { id, title, content, published, skills, ais } = args;
       if (id === undefined) throw new Error("No id provided");
 
       const dbUser = await prisma.user.findUnique({
@@ -138,7 +160,6 @@ builder.mutationField("updatePost", (t) =>
         data: {
           title: title || undefined,
           content: content || undefined,
-          votes: votes || undefined,
           published: published || undefined,
           skills: !skills || skills.length === 0 ? undefined : {
             createMany: {
@@ -161,26 +182,51 @@ builder.mutationField("updatePostVote", (t) =>
     type: "Post",
     args: {
       id: t.arg.id({ required: true }),
-      votes: t.arg.int({ required: true }),
     },
     resolve: async (_query, _parent, args, ctx, _info) => {
       const { user } = await ctx;
       if (!user) throw new Error("Not authenticated");
 
-      const { id, votes } = args;
+      const { id } = args;
       if (id === undefined) throw new Error("No id provided");
 
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
-
       if(!dbUser) throw new Error("User not found");
+
+      const voteOnPost = await prisma.votesOnPosts.findFirst({
+        where: { postId: id.toString(), userId: dbUser?.id },
+      });
+
+      if(voteOnPost) {
+        return await prisma.post.update({
+          where: { id: id.toString() },
+          data: {
+            votes: {
+              deleteMany: {
+                id: voteOnPost.id,
+              }
+            }
+          },
+          include: {
+            _count: { select: { votes: true } },
+          }
+        });
+      }
 
       return await prisma.post.update({
         where: { id: id.toString() },
         data: {
-          votes: typeof votes === 'number' ? votes : undefined,
+          votes: {
+            create: [{
+              userId: dbUser?.id,
+            }]
+          }
         },
+        include: {
+          _count: { select: { votes: true } },
+        }
       });
     }
   })

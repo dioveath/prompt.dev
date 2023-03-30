@@ -15,7 +15,6 @@ const addCommentMutation = gql`
         createComment(content: $content, postId: $postId, parentId: $parentId) {
             id
             content
-            votes
             createdAt
             updatedAt
             author {
