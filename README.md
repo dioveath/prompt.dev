@@ -1,6 +1,6 @@
 ## prompters.dev
 [prompters.dev](https://prompters.dev)
-This website serves as community that organize new & upcoming AI tools, products. This community are also for futurists to share their findings & theories.
+This serves as community that organize new & upcoming AI tools, products. This platform is for prosumers who wants to share their AI product, share their tips to boost their productivity. This community are also for futurists to share their findings & theories.
 
 Write me an excellent short description for prompters.dev. It should be concise, engaging and clear. (pun intended 🧑‍💻🤖)
 
@@ -20,3 +20,8 @@ Write me an excellent short description for prompters.dev. It should be concise,
 - Add slug
 - Post media content
 - Username System
+
+- Product Posting Feature (done)
+- Tagging system to write posts on the product (ai) (done)
+- Vote per User
+- Helpful votes system, Did it solved your problem?

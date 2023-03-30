@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
+import Link from "next/link";
 
 const navitem = cva("cursor-pointer flex justify-center items-center", {
   variants: {
@@ -26,6 +27,10 @@ export default function NavItem({
   mypath: string;
 }) {
   return (
-    <li className={navitem({ isActive: path === mypath })}> {children} </li>
+    <li className={navitem({ isActive: path === mypath })}> 
+      {/* <Link href={`/${mypath}`}> */}
+        {children}       
+      {/* </Link> */}
+    </li>
   );
 }

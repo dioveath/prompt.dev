@@ -17,7 +17,7 @@ datasource db {
 model User {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   email     String    @unique
-  username  String?   @unique
+  username  String?
   name      String?
   avatar    String?
   jobTitle  String?
@@ -59,9 +59,9 @@ model Comment {
   updatedAt DateTime @updatedAt
   published Boolean  @default(false)
   content   String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: NoAction)
   authorId  String   @db.ObjectId
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: NoAction)
   postId    String   @db.ObjectId
   votes     Int      @default(0)
 
@@ -91,15 +91,26 @@ model SkillsOnPosts {
 }
 
 model AI {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  published Boolean      @default(false)
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  published   Boolean      @default(false)
+  title       String
+  description String
+  avatar      String?
+  company     String?
+  website     String
+  posts       AIsOnPosts[]
+  category    AICategory?  @relation(fields: [categoryId], references: [id])
+  categoryId  String?      @db.ObjectId
+}
+
+model AICategory {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   title     String
-  avatar    String?
-  company   String
-  website   String
-  posts     AIsOnPosts[]
+  ais       AI[]
 }
 
 model AIsOnPosts {

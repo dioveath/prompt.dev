@@ -63,7 +63,7 @@ builder.mutationField("createPost", (t) =>
       title: t.arg.string({ required: true }),
       content: t.arg.string({ required: true }),
       published: t.arg.boolean({ defaultValue: false, required: true }),
-      slug: t.arg.string(),
+      slug: t.arg.string({ required: false}),
       skills: t.arg.idList(),
       ais: t.arg.idList(),
     },
@@ -72,12 +72,12 @@ builder.mutationField("createPost", (t) =>
       if (!user) throw new Error("Not authenticated");
 
       const { title, content, slug, published, skills, ais } = args;
+
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
 
       if (!dbUser) throw new Error("User not found");
-
       const generatedSlug = slug || slugify(title, { lower: true, strict: true });
 
       const found = await prisma.post.findUnique({ where: { slug: generatedSlug } });
