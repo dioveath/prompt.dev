@@ -25,14 +25,15 @@ model User {
   comments        Comment[]
   votesOnPosts    VotesOnPosts[]
   votesOnComments VotesOnComments[]
+  reviews         ReviewsOnTools[]
+  tools           UsersOnTools[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
 
 model Post {
-  id        String          @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   published Boolean         @default(false)
   title     String
   content   String?
@@ -43,55 +44,61 @@ model Post {
   ais       AIsOnPosts[]
   comments  Comment[]
   votes     VotesOnPosts[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model VotesOnPosts {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   post      Post     @relation(fields: [postId], references: [id])
   postId    String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @db.ObjectId
   value     Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  published Boolean  @default(false)
-  content   String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: NoAction)
-  authorId  String   @db.ObjectId
-  post      Post     @relation(fields: [postId], references: [id], onDelete: NoAction)
-  postId    String   @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  replies  Comment[]         @relation(name: "replies")
-  parent   Comment?          @relation(name: "replies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentId String?           @db.ObjectId
-  votes    VotesOnComments[]
+  published Boolean @default(false)
+  content   String
+  author    User    @relation(fields: [authorId], references: [id], onDelete: NoAction)
+  authorId  String  @db.ObjectId
+  post      Post    @relation(fields: [postId], references: [id], onDelete: NoAction)
+  postId    String  @db.ObjectId
+
+  replies   Comment[]         @relation(name: "replies")
+  parent    Comment?          @relation(name: "replies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId  String?           @db.ObjectId
+  votes     VotesOnComments[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 }
 
 model VotesOnComments {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   comment   Comment  @relation(fields: [commentId], references: [id])
   commentId String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @db.ObjectId
   value     Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Skill {
-  id        String          @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   published Boolean         @default(false)
   title     String
   avatar    String?
   posts     SkillsOnPosts[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model SkillsOnPosts {
@@ -105,9 +112,8 @@ model SkillsOnPosts {
 }
 
 model AI {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   published   Boolean      @default(false)
   title       String
   description String
@@ -117,14 +123,16 @@ model AI {
   posts       AIsOnPosts[]
   category    AICategory?  @relation(fields: [categoryId], references: [id])
   categoryId  String?      @db.ObjectId
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model AICategory {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   title     String
   ais       AI[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model AIsOnPosts {
@@ -135,4 +143,57 @@ model AIsOnPosts {
   aiId      String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Tool {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title            String
+  shortDescription String?
+  description      String?
+  avatar           String?
+  website          String
+  category         ToolCategory?    @relation(fields: [categoryId], references: [id])
+  categoryId       String?          @db.ObjectId
+  reviews          ReviewsOnTools[]
+  toolAuthors      UsersOnTools[]   @relation(name: "toolAuthors")
+  toolUsers        UsersOnTools[]   @relation(name: "toolUsers")
+
+  published    Boolean   @default(false)
+  lastReleased DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model ToolCategory {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  tools     Tool[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ReviewsOnTools {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  tool      Tool     @relation(fields: [toolId], references: [id])
+  toolId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  rating    Int
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UsersOnTools {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  authoredTool Tool     @relation(name: "toolAuthors", fields: [toolId], references: [id])
+  usedTool     Tool     @relation(name: "toolUsers", fields: [toolId], references: [id])
+  toolId       String   @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

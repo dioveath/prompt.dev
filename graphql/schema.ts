@@ -8,6 +8,11 @@ import "./types/Post";
 import "./types/Comment";
 import "./types/VotesOnPosts";
 import "./types/VotesOnComments";
+import "./types/Tool";
+import "./types/ReviewsOnTools";
+import "./types/UsersOnTools";
+import "./types/ToolCategory";
+
 
 import { builder } from "./builder";
 
