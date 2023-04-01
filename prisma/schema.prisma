@@ -42,10 +42,23 @@ model Post {
   authorId  String          @db.ObjectId
   skills    SkillsOnPosts[]
   ais       AIsOnPosts[]
+  tools     ToolsOnPosts[]
   comments  Comment[]
   votes     VotesOnPosts[]
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+}
+
+model ToolsOnPosts {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String   @db.ObjectId
+  tool      Tool     @relation(fields: [toolId], references: [id])
+  toolId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, toolId, postId], name: "tool_post_index")
 }
 
 model VotesOnPosts {
@@ -109,6 +122,8 @@ model SkillsOnPosts {
   skillId   String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([id, skillId, postId], name: "skill_post_index")
 }
 
 model AI {
@@ -143,6 +158,8 @@ model AIsOnPosts {
   aiId      String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  @@index([id, aiId, postId], name: "ai_post_index")
 }
 
 model Tool {
@@ -158,6 +175,7 @@ model Tool {
   reviews          ReviewsOnTools[]
   toolAuthors      UsersOnTools[]   @relation(name: "toolAuthors")
   toolUsers        UsersOnTools[]   @relation(name: "toolUsers")
+  posts            ToolsOnPosts[]
 
   published    Boolean   @default(false)
   lastReleased DateTime?
@@ -184,6 +202,8 @@ model ReviewsOnTools {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([id, toolId, userId], name: "tool_review_index")
 }
 
 model UsersOnTools {
@@ -196,4 +216,6 @@ model UsersOnTools {
   userId       String   @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([id, toolId, userId], name: "tool_user_index")
 }

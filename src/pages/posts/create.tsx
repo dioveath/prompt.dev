@@ -53,7 +53,11 @@ type CreatePostProps = {
     ais?: [];
 };
 
-export default function CreatePost() {
+type UpdatePostProps = {
+    post: any;
+}
+
+export default function CreatePost({ post } : UpdatePostProps) {
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm<CreatePostProps>();
   const [createPost, { data, loading, error }] = useMutation(createPostQuery);
   const { data: skillsData, loading: skillsLoading, error: skillsError } = useQuery(getSkillsQuery);
@@ -81,10 +85,10 @@ export default function CreatePost() {
         <h1 className='text-2xl font-bold'>Create Post</h1>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2'>
             
-            <input {...register("title", { required: true })} className='bg-gray-300 py-2 px-4'/>
+            <input {...register("title", { required: true, value: post?.title })} className='bg-gray-300 py-2 px-4'/>
             {errors.title && <span className='text-xs text-red-500'>This field is required</span>}
 
-            <SlateEditor/>
+            <SlateEditor initialValue={post?.content}/>
 
             {/* <input {...register("content", { required: true })} className='bg-gray-300 py-2 px-4'/>
             {errors.content && <span className='text-xs text-red-500'>This field is required</span>} */}

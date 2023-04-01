@@ -1,6 +1,7 @@
 import Button from "@/ui/button";
 import Container from "@/ui/container";
 import { gql, useQuery } from "@apollo/client";
+import { Post } from "@prisma/client";
 import Link from "next/link";
 
 const meQuery = gql`
@@ -12,6 +13,11 @@ const meQuery = gql`
       email
       createdAt
       avatar
+      posts {
+        id
+        title
+        votesCount
+      }
     }
   }
 `;
@@ -30,6 +36,18 @@ export default function Profile() {
         <p>{data.me.jobTitle}</p>
         <p>{data.me.email}</p>
       </div>
+
+      <div>
+        <h1 className="font-bold text-lg">Posts</h1>
+        {data.me.posts.map((post: Post & { votesCount: number }) => (
+          <div key={post.id} className="max-w-md w-full shadow-xl rounded-md my-4 px-4">
+            <Link href={`/posts/mutate/${post.id}`} className="">
+              <p className="text-lg">{post.title}</p>
+              <p className="text-sm">{post.votesCount} votes</p>
+            </Link>
+          </div>
+        ))}
+      </div>    
 
       <Link href="/posts/create">
         <Button> Create new Post </Button>

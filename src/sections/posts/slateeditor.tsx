@@ -23,17 +23,18 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
-const RichTextExample = () => {
+const SlateEditor = ({ initialValue} : { initialValue?: string | null}) => {
   const renderElement = useCallback((props:any) => <Element {...props} />, [])
   const renderLeaf = useCallback((props:any) => <Leaf {...props} />, [])
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
 
-  const initialValue = useMemo(() => {
+  const defaultValue = useMemo(() => {
+    if(initialValue) return JSON.parse(initialValue);
     return JSON.parse(localStorage.getItem('content') || '[{"type":"paragraph","children":[{"text":"A line of text in a paragraph."}]}]');
-  }, []);
+  }, [initialValue]);
 
   return (
-    <Slate editor={editor} value={initialValue} onChange={value => {
+    <Slate editor={editor} value={defaultValue} onChange={value => {
         const isAstChange = editor.operations.some(op => op.type != 'set_selection');
         if(isAstChange){
             const content = JSON.stringify(value);
@@ -218,4 +219,4 @@ const defaultValue: Descendant[] = [
   },
 ]
 
-export default RichTextExample
+export default SlateEditor;

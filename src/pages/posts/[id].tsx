@@ -73,7 +73,7 @@ export type { CommentExtended };
 
 
 export default function Post({ post }: PostProps) {
-  const { id, title, content, skills, ais, votesCount: propVoteCount, author } = SuperJSON.parse<any>(post);
+  const { id, title, content, skills, ais, tools, votesCount: propVoteCount, author } = SuperJSON.parse<any>(post);
     const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
   const [formOpen, setFormOpen] = useState<boolean>(false);
 
@@ -147,6 +147,13 @@ export default function Post({ post }: PostProps) {
                 {ais?.map((ai: any) => (
                   <p key={ai.id} className="text-xs text-white bg-green-500 px-2 py-1 rounded-full">
                     {ai.title}
+                  </p>
+                ))}
+              </div>
+              <div className="flex flex-row gap-2">
+                {tools?.map((tool: any) => (
+                  <p key={tool.id} className="text-xs text-white bg-blue-500 px-2 py-1 rounded-full">
+                    {tool.title}
                   </p>
                 ))}
               </div>
@@ -259,6 +266,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             ai: true,
           },
         },
+        tools: {
+          include: {
+            tool: true,
+          }
+        },
         comments: {
           orderBy: {
             createdAt: "desc",
@@ -273,6 +285,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     post.skills = post?.skills.map((skill: any) => skill.skill);
     post.ais = post?.ais.map((ai: any) => ai.ai);
+    post.tools = post?.tools.map((tool: any) => tool.tool);
     post.votesCount = post._count.votes;
   } catch (error) {
     console.log(error);
