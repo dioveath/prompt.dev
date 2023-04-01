@@ -27,6 +27,7 @@ model User {
   votesOnComments VotesOnComments[]
   reviews         ReviewsOnTools[]
   tools           UsersOnTools[]
+  authoredTools   AuthorsOnTools[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -158,7 +159,7 @@ model AIsOnPosts {
   aiId      String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([id, aiId, postId], name: "ai_post_index")
 }
 
@@ -172,10 +173,11 @@ model Tool {
   website          String
   category         ToolCategory?    @relation(fields: [categoryId], references: [id])
   categoryId       String?          @db.ObjectId
+  posts            ToolsOnPosts[]  
   reviews          ReviewsOnTools[]
-  toolAuthors      UsersOnTools[]   @relation(name: "toolAuthors")
+
+  toolAuthors      AuthorsOnTools[] @relation(name: "toolAuthors")
   toolUsers        UsersOnTools[]   @relation(name: "toolUsers")
-  posts            ToolsOnPosts[]
 
   published    Boolean   @default(false)
   lastReleased DateTime?
@@ -209,13 +211,25 @@ model ReviewsOnTools {
 model UsersOnTools {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  authoredTool Tool     @relation(name: "toolAuthors", fields: [toolId], references: [id])
-  usedTool     Tool     @relation(name: "toolUsers", fields: [toolId], references: [id])
-  toolId       String   @db.ObjectId
-  user         User     @relation(fields: [userId], references: [id])
-  userId       String   @db.ObjectId
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  usedTool  Tool     @relation(name: "toolUsers", fields: [toolId], references: [id])
+  toolId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id, toolId, userId], name: "tool_user_index")
+}
+
+model AuthorsOnTools {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  tool      Tool     @relation(name: "toolAuthors", fields: [toolId], references: [id])
+  toolId    String   @db.ObjectId
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, toolId, authorId], name: "tool_author_index")
 }

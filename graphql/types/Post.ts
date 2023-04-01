@@ -191,7 +191,7 @@ builder.mutationField("updatePost", (t) =>
             createMany: {
               data: newTools.map((toolId) => ({ toolId: toolId.toString() })),
             }
-          }            
+          }         
         },
       });
     }

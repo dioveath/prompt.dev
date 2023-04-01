@@ -18,10 +18,12 @@ Write me an excellent short description for prompters.dev. It should be concise,
 - Comment/Replies
 - Sharing post in social media (SEO friendly)
 - Add slug
-- Post media content
+
 - Username System
 
 - Product Posting Feature (done)
 - Tagging system to write posts on the product (ai) (done)
 - Helpful votes system, Did it solved your problem? Boost productivity level 0-5
+- Tools - I use this feature
+- Post media content (Image)
 - Vote per User on Post (done), Vote per User on Comment

@@ -15,7 +15,7 @@ const toolsQuery = gql`
       description
       toolAuthors {
         id
-        user {
+        author {
           name
         }
       }

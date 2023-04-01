@@ -11,8 +11,10 @@ import "./types/VotesOnComments";
 import "./types/Tool";
 import "./types/ReviewsOnTools";
 import "./types/UsersOnTools";
+import "./types/AuthorsOnTools";
 import "./types/ToolCategory";
 import "./types/ToolsOnPosts";
+
 
 import { builder } from "./builder";
 

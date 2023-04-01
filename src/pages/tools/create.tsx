@@ -12,7 +12,7 @@ const createAICategoryQuery = gql`
       title
       toolAuthors {
         id
-        user { 
+        author { 
             name
         }
       }

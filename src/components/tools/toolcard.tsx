@@ -17,8 +17,8 @@ export default function ToolCard({ tool }: ToolCardProps) {
         <p>{tool.shortDescription}</p>
         <p>{tool.website}</p>
         <ul className="">
-          {tool?.toolAuthors.map((usersOnTools: any) => {
-            const author = usersOnTools.user;
+          {tool?.toolAuthors.map((authorsOnTools: any) => {
+            const author = authorsOnTools.author;
             return (
               <li key={author.id} className="text-xs font-bold">
                 {author.name}

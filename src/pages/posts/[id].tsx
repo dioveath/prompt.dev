@@ -14,11 +14,7 @@ import CommentCard from "@/components/posts/comment";
 import { Comment } from "@prisma/client";
 import AddComment from "@/components/posts/add_comment";
 
-
-
 import SlateView from "@/sections/posts/slateview";
-
-
 
 type PostProps = {
   post: string;
@@ -74,7 +70,7 @@ export type { CommentExtended };
 
 export default function Post({ post }: PostProps) {
   const { id, title, content, skills, ais, tools, votesCount: propVoteCount, author } = SuperJSON.parse<any>(post);
-    const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
+  const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
   const [formOpen, setFormOpen] = useState<boolean>(false);
 
   const [rootComments, setRootComments] = useState<CommentExtended[]>([]);
