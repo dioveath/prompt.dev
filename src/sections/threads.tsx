@@ -24,6 +24,12 @@ const postsQuery = gql`
           title
         }
       }
+      tools {
+        tool {
+          id
+          title
+        }
+      }
     }
   }
 `

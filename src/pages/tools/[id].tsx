@@ -9,7 +9,6 @@ import { ToolExtended } from ".";
 import Image from "next/image";
 import { isValidID } from "@/helpers/isValidID";
 import { toast } from "react-hot-toast";
-import apolloClient from "../../../lib/apollo";
 
 const meQuery = gql`
   query {

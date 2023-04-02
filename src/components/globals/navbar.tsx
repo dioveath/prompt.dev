@@ -1,29 +1,221 @@
-import React from 'react'
-import { Navbar, Button, Text, Link } from '@nextui-org/react'
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import { gql, useQuery } from '@apollo/client';
+import { Link, Skeleton } from '@mui/material';
 
-export default function NavbarComponent() {
+const pages = [
+  { label: 'Tools', href: '/tools' },
+  { label: 'Posts', href: '/posts' },
+  { label: 'Jobs', href: '/jobs' },
+  { label: 'Events', href: '/events' },
+  { label: 'Courses', href: '/courses'}
+];
+
+const settings = [
+  { 
+    label: 'Profile', 
+    href: '/profile'
+  }, 
+  {
+    label: 'Account',
+    href: '/account'
+  },
+  {
+    label: 'Dashboard',
+    href: '/dashboard'
+  },
+  {
+    label: 'Logout',
+    href: '/api/auth/logout'
+  }
+];
+  
+
+const meQuery = gql`
+  query {
+    me {
+      email
+      name
+      avatar
+      jobTitle
+      email
+      createdAt
+      avatar
+      posts {
+        id
+        title
+        votesCount
+      }
+    }
+  }
+`;
+
+
+
+function ResponsiveAppBar() {
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const { data, loading, error } = useQuery(meQuery);
+
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
   return (
-    <Navbar variant={'floating'}>
-        <Navbar.Brand>
-            <Text weight={'bold'}> prompt.dev </Text>
-        </Navbar.Brand>
-        <Navbar.Content activeColor={'secondary'}>
-            <Navbar.Link href="#" isActive>Home</Navbar.Link>
-            <Navbar.Link href="#">Skills</Navbar.Link>
-            <Navbar.Link href="#">AIs</Navbar.Link>            
-            <Navbar.Link href="#">About</Navbar.Link>
-            <Navbar.Link href="#">Contact</Navbar.Link>            
-        </Navbar.Content>
-        <Navbar.Content>
-          <Navbar.Link color="inherit" href="#">
-            Login
-          </Navbar.Link>
-          <Navbar.Item>
-            <Button auto flat as={Link} color={'secondary'} href="#">
-              Sign Up
-            </Button>
-          </Navbar.Item>
-        </Navbar.Content>
-    </Navbar>
-  )
+    <AppBar position="static" color='transparent' className='shadow-none px-10'>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '-0.05rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            prompters.dev
+          </Typography>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              {pages.map(({ label, href}) => (
+                <MenuItem key={label} onClick={handleCloseNavMenu}>
+                  <Link href={href}>
+                  <Typography textAlign="center">{label}</Typography>                  
+                  </Link>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href=""
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '-0.05rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            prompters.dev
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map(({ label, href }) => (
+              <Button
+                key={label}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2 }}
+                href={href}
+              >
+                {label}
+              </Button>
+            ))}
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2}}>
+            { !loading && !data && <Button variant="contained" color="primary" href="/api/auth/login">Login</Button> }
+            { !loading && !data && <Button variant="outlined" color="primary" href="/api/auth/login">Sign Up</Button> }
+          </Box>
+
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                { loading && <Skeleton animation="wave" variant="circular" width={40} height={40} />}
+                { data && <Avatar alt={data.me.name + " Avatar"} src={data.me.avatar} /> }
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map(({ label, href}) => (
+                <MenuItem key={label} onClick={handleCloseUserMenu} href={href}>
+                  <Link href={href} className='no-underline'>
+                  <Typography textAlign="center">
+                    {label}</Typography>                  
+                  </Link>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
 }
+export default ResponsiveAppBar;

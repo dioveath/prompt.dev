@@ -1,37 +1,42 @@
-import { Inter } from "next/font/google";
 import { AppProps } from "next/app";
-import { NextUIProvider, createTheme, theme } from "@nextui-org/react";
-import { ThemeProvider as NextThemeProvider } from "next-themes";
-import { UserProvider } from '@auth0/nextjs-auth0/client';
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import { CacheProvider, EmotionCache } from "@emotion/react";
+import createEmotionCache from "@/lib/createEmotionCache";
+
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { ApolloProvider } from "@apollo/client/react";
 import apolloClient from "../../lib/apollo";
 import { Toaster } from "react-hot-toast";
 
 import "@/styles/globals.css";
+import Head from "next/head";
+import theme from "@/config/theme";
 
-const primaryFont = Inter({
-  subsets: ["latin"],
-  variable: "--primary-font",
-});
+const clientSideEmotionCache = createEmotionCache();
 
-const lightTheme = createTheme({ type: "light" });
-const darkTheme = createTheme({ type: "dark" });
+export interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App(props: MyAppProps) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   return (
     <UserProvider>
       <ApolloProvider client={apolloClient}>
-        <NextThemeProvider defaultTheme="light" attribute="class" value={{
-          light: lightTheme.className,
-          dark: darkTheme.className
-        }}>
-          <NextUIProvider>
-            <Toaster/>
-            <main className={`${primaryFont.variable} font-sans`}>
-              <Component {...pageProps} />
-            </main>
-          </NextUIProvider>
-        </NextThemeProvider>
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <meta
+              name="viewport"
+              content="initial-scale=1, width=device-width"
+            />
+          </Head>
+          <ThemeProvider theme={theme}>
+            <Toaster />
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </CacheProvider>
       </ApolloProvider>
     </UserProvider>
   );

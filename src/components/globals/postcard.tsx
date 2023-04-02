@@ -6,6 +6,7 @@ import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
 import { SlBadge } from "react-icons/sl";
 import { GiRobotHelmet } from "react-icons/gi";
 import Chip from "./chip";
+import { Typography } from "@mui/material";
 
 
 const updateVoteMutation = gql`
@@ -30,7 +31,7 @@ type PostCardProps = {
 };
 
 export default function PostCard(props: PostCardProps) {
-  const { id, title, content, votesCount, meVoted, skills, ais } = props;
+  const { id, title, content, votesCount, meVoted, skills, ais, tools } = props;
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
 
   const summary = useMemo(() => {
@@ -66,12 +67,22 @@ export default function PostCard(props: PostCardProps) {
           <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
           </div>
         </div>
-        <Link href={`posts/${id}`} className="flex-1 py-2 px-2">
-          <p className="font-bold text-2xl mb-1"> {title} </p>
-          <p className="leading-4 text-ellipses"> {summary} </p>
+        <Link href={`posts/${id}`} className="flex-1 py-2 px-2 no-underline p-0 m-0">
+          <Typography variant="h6" className="font-bold text-2xl mb-1 text-black"> {title} </Typography>
+          <Typography variant="body1" className="leading-4 text-black"> {summary} </Typography>
           <div className="flex gap-4">
+
             <div>
-              <p className="font-semibold mb-1"> Skills </p>
+              <Typography variant="body1" className="font-semibold mb-1"> Tools </Typography>
+              <ul className="flex gap-2">
+                { tools.map((tool: any) => (
+                  <Chip key={tool.id} label={tool.title} intent="primary" icon={<SlBadge color="green"/>}/>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <Typography variant="body1" className="font-semibold mb-1"> Skills </Typography>
               <ul className="flex gap-2">
                 {skills.map((skill: any) => (
                   <Chip key={skill.id} label={skill.title} intent="primary" icon={<SlBadge color="yellow"/>}/>
@@ -80,7 +91,7 @@ export default function PostCard(props: PostCardProps) {
             </div>
             
             <div>
-              <p className="font-semibold mb-1"> AIs </p>
+              <Typography variant="body1" className="font-semibold mb-1"> AI </Typography>
               <ul className="flex gap-2">
                 {ais.map((ai: any) => (
                   <Chip key={ai.id} label={ai.title} intent="secondary" icon={<GiRobotHelmet/>}/>
