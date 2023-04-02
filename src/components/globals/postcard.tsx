@@ -6,7 +6,7 @@ import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
 import { SlBadge } from "react-icons/sl";
 import { GiRobotHelmet } from "react-icons/gi";
 import Chip from "./chip";
-import { Typography } from "@mui/material";
+import { Card, Container, Typography } from "@mui/material";
 
 
 const updateVoteMutation = gql`
@@ -28,6 +28,7 @@ type PostCardProps = {
   meVoted: boolean;
   skills: [];
   ais: [];
+  tools: [];
 };
 
 export default function PostCard(props: PostCardProps) {
@@ -42,7 +43,7 @@ export default function PostCard(props: PostCardProps) {
         summary += " " + node.children[0].text;
       }
     });
-    return summary.length >= 496 ? summary.substring(0, 496) + "..." : summary;
+    return summary.length >= 96 ? summary.substring(0, 96) + "..." : summary;
   }, [content]);
 
    const onVote = () => {
@@ -67,11 +68,10 @@ export default function PostCard(props: PostCardProps) {
           <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
           </div>
         </div>
-        <Link href={`posts/${id}`} className="flex-1 py-2 px-2 no-underline p-0 m-0">
+        <Link href={`posts/${id}`} className="flex-1 py-2 px-4 no-underline">
           <Typography variant="h6" className="font-bold text-2xl mb-1 text-black"> {title} </Typography>
-          <Typography variant="body1" className="leading-4 text-black"> {summary} </Typography>
+          <Typography variant="body1" className="text-black"> {summary} </Typography>
           <div className="flex gap-4">
-
             <div>
               <Typography variant="body1" className="font-semibold mb-1"> Tools </Typography>
               <ul className="flex gap-2">

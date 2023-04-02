@@ -1,4 +1,4 @@
-import Navbar from "@/not-app/navbar";
+import Navbar from "@/components/globals/navbar";
 import Container from "@/ui/container";
 import { GetServerSideProps } from "next";
 import React, { useEffect, useMemo, useState } from "react";
@@ -8,6 +8,8 @@ import Footer from "@/sections/footer";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import toast from "react-hot-toast";
 import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
+
+import Button from "@mui/material/Button";
 
 import { FacebookShareButton, FacebookIcon, InstapaperShareButton, InstapaperIcon, TwitterShareButton, TwitterIcon } from "react-share";
 import CommentCard from "@/components/posts/comment";
@@ -117,7 +119,7 @@ export default function Post({ post }: PostProps) {
 
   return (
     <Container>
-      <Navbar path="post" />
+      <Navbar path="/posts" />
       <div className="flex flex-col items-center min-h-screen py-2">
         <div className="flex flex-col items-center justify-start w-full bg-white p-6 rounded-lg shadow-xl gap-4">
           <div className="w-full flex items-center justify-start gap-2">
@@ -167,7 +169,7 @@ export default function Post({ post }: PostProps) {
               <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
             </div>
             <div>
-              <button onClick={(e) => setFormOpen(true)}> Comment </button>
+              <Button onClick={(e) => setFormOpen(true)}> Comment </Button>
             </div>
 
             <div className="flex gap-2">

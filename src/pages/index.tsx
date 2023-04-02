@@ -1,11 +1,12 @@
 import React from "react";
 import Navbar from "@/components/globals/navbar";
-import Hero from "@/not-app/hero";
-import Search from "@/not-app/search";
+import Hero from "@/sections/home/hero";
+import Search from "@/sections/home/search";
 import { Inter } from "next/font/google";
 import ThreadsList from "@/sections/threads";
-import Container from "@/ui/container";
 import Footer from "@/sections/footer";
+import { Container } from "@mui/material";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,10 +14,10 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   return (
     <main className={`w-screen min-h-screen h-full ${inter.className}`}>
-      <Navbar />
+      <Navbar path="/"/>
       <Hero />
-      <Search />   
-      <Container className="my-4">
+      <Search /> 
+      <Container className="my-10">
         <ThreadsList/>
       </Container>
       <Footer/>

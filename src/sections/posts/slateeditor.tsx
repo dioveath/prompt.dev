@@ -61,6 +61,7 @@ const SlateEditor = ({ initialValue} : { initialValue?: string | null}) => {
         <BlockButton format="justify" icon="format_align_justify" />
       </Toolbar>
       <Editable
+        className='bg-[#e1e1e1] h-[400px] overflow-y-scroll p-4'
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"

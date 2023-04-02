@@ -1,9 +1,10 @@
-import React, { useRef } from 'react'
-import Button from '@/ui/button'
+import React, { useEffect, useRef } from 'react'
+import Button from '@mui/material/Button';
 import { gql, useMutation } from '@apollo/client';
 import { useRefresh } from '@/hooks/useRefresh';
 import { CommentExtended, useCommentContext } from '@/pages/posts/[id]';
 import apolloClient from '../../../lib/apollo';
+import { TextField, TextareaAutosize } from '@mui/material';
 
 type AddCommentProps = {
     comment: { postId: string, id?: string }
@@ -50,13 +51,13 @@ export default function AddComment({ comment, setFormOpen }: AddCommentProps) {
   return (
     <form action="#" className='flex w-full items-center gap-4'>
         <div className='flex-1'>
-            <textarea name="comment" id="" cols={1} rows={1} className='w-full bg-gray-100 rounded-md p-4' ref={textareaRef}/>
+            <TextField id='outlined-basic' label='Your message' variant='outlined' multiline rows={2} maxRows={4} fullWidth inputRef={textareaRef}/>
             { error && <div className='text-xs text-red-500'> {error.message} </div> }
         </div>
         
         <div className='flex flex-col gap-1'>
-            <Button onClick={(e) => onAddComment(textareaRef.current?.value || "")}> Add Comment </Button>
-            <Button onClick={(e) => setFormOpen(false)} intent={'secondary'}> Cancel Comment </Button>        
+            <Button onClick={(e) => onAddComment(textareaRef.current?.value || "")} variant='contained'> Add Comment </Button>
+            <Button onClick={(e) => setFormOpen(false)} variant='text'> Cancel Comment </Button>        
         </div>
         
     </form>

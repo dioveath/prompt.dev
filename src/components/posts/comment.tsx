@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import AddComment from "./add_comment";
 import { CommentExtended, useCommentContext } from "@/pages/posts/[id]";
+import { Button } from "@mui/material";
 
 type CommentCardProps = {
   comment: CommentExtended,
@@ -33,7 +34,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
             <div> upvote </div>
             <div> downvote </div>            
             <div className="flex flex-row gap-2">
-                <button onClick={() => setFormOpen(!isFormOpen)}> reply </button>
+                <Button onClick={() => setFormOpen(!isFormOpen)}> reply </Button>
             </div>
         </div>
         {isFormOpen && <AddComment comment={{ id: comment.id, postId: comment.post.id }} setFormOpen={setFormOpen}/>}

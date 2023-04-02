@@ -4,10 +4,11 @@ import toast from 'react-hot-toast';
 import { gql } from '@apollo/client';
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import Container from '@/ui/container';
-import Button from '@/ui/button';
+import { Container, Button } from '@mui/material';
 
 import dynamic from 'next/dynamic';
+import Navbar from '@/components/globals/navbar';
+import { TextField } from '@mui/material';
 
 const Select = dynamic(import('react-select'), { ssr: false });
 const SlateEditor = dynamic(import('@/sections/posts/slateeditor'), { ssr: false });
@@ -46,11 +47,21 @@ const getAIsQuery = gql`
     }
 `;
 
+const getToolsQuery = gql`
+    query {
+        tools {
+            id
+            title
+        }
+    }
+`;
+
 type CreatePostProps = {
     title: string;
     content: string;
     skills?: [];
     ais?: [];
+    tools?: [];
 };
 
 type UpdatePostProps = {
@@ -58,16 +69,24 @@ type UpdatePostProps = {
 }
 
 export default function CreatePost({ post } : UpdatePostProps) {
+
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm<CreatePostProps>();
   const [createPost, { data, loading, error }] = useMutation(createPostQuery);
   const { data: skillsData, loading: skillsLoading, error: skillsError } = useQuery(getSkillsQuery);
   const { data: aiData, loading: aiLoading, error: aiError } = useQuery(getAIsQuery);
+  const { data: toolData, loading: toolLoading, error: toolError } = useQuery(getToolsQuery);
 
   const onSubmit: SubmitHandler<CreatePostProps> = data => {
-    const { title, skills, ais } = data;
+    const { title, skills, ais, tools } = data;
 
     const content = localStorage.getItem('content');
-    const variables = { title, content, skills: skills?.map((skill: any) => skill.id), ais: ais?.map((ai: any) => ai.id)};
+    const variables = { 
+        title, 
+        content, 
+        skills: skills?.map((skill: any) => skill.id), 
+        ais: ais?.map((ai: any) => ai.id), 
+        tools: tools?.map((tool: any) => tool.id)
+    };
 
     try {
       toast.promise(createPost({ variables }), {
@@ -81,18 +100,22 @@ export default function CreatePost({ post } : UpdatePostProps) {
   };
 
   return (
-    <Container>
+    <>
+    <Navbar path='/posts'/>
+    <Container className='py-4'>
         <h1 className='text-2xl font-bold'>Create Post</h1>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2'>
             
-            <input {...register("title", { required: true, value: post?.title })} className='bg-gray-300 py-2 px-4'/>
+            <label htmlFor="content" className='text-lg font-semibold mt-4'> Title </label>            
+            <TextField { ...register("title", { required: true })} label='Title' variant='filled' size='medium' rows={1} multiline/>
             {errors.title && <span className='text-xs text-red-500'>This field is required</span>}
 
-            <SlateEditor initialValue={post?.content}/>
-
-            {/* <input {...register("content", { required: true })} className='bg-gray-300 py-2 px-4'/>
-            {errors.content && <span className='text-xs text-red-500'>This field is required</span>} */}
-
+            <label htmlFor="content" className='text-lg font-semibold mt-4'> Post Content </label>
+            <Container>
+                <SlateEditor initialValue={post?.content}/>
+            </Container>
+            
+            <label htmlFor="skills" className='text-lg font-semibold mt-4'> Skills </label>
             <Controller
                 name="skills"
                 control={control}
@@ -107,6 +130,7 @@ export default function CreatePost({ post } : UpdatePostProps) {
                 )}
             />
 
+            <label htmlFor="ais" className='text-lg font-semibold mt-4'> AIs </label>
             <Controller
                 name="ais"
                 control={control}
@@ -121,8 +145,24 @@ export default function CreatePost({ post } : UpdatePostProps) {
                 )}
             />
 
-            <Button type="submit"> Create Post </Button>
+            <label htmlFor="tools" className='text-lg font-semibold mt-4'> Tools </label>
+            <Controller
+                name="tools"
+                control={control}
+                render={({ field }) => (
+                    <Select
+                        {...field}
+                        options={toolData?.tools}
+                        isMulti={true}
+                        getOptionLabel={(option: any) => option.title }
+                        getOptionValue={(option: any) => option.id}
+                    />
+                )}
+            />
+
+            <Button type="submit" variant='contained'> Create Post </Button>
         </form>
-    </Container>
+    </Container>    
+    </>
   )
 }

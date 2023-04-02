@@ -4,12 +4,13 @@ import toast from "react-hot-toast";
 import { gql } from "@apollo/client";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import Container from "@/ui/container";
-import Button from "@/ui/button";
+import { Container, Button, Grid } from "@mui/material";
 
 import dynamic from "next/dynamic";
 import SuperJSON from "superjson";
 import { AI, Post, Skill, SkillsOnPosts, Tool } from "@prisma/client";
+import Navbar from "@/components/globals/navbar";
+import { TextField } from "@mui/material";
 
 const Select = dynamic(import("react-select"), { ssr: false });
 const SlateEditor = dynamic(import("@/sections/posts/slateeditor"), {
@@ -116,22 +117,23 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
   };
 
   return (
-    <Container>
-      <h1 className="text-2xl font-bold">Create Post</h1>
+    <>
+    <Navbar path='/posts'/>
+    <Container className='py-4'>
+      <h1 className="text-2xl font-bold py-4">Update Post</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-        <input
-          {...register("title", { required: true, value: post?.title })}
-          className="bg-gray-300 py-2 px-4"
-        />
+        <label htmlFor="title" className="text-sm font-bold"> Title </label>
+        <TextField {...register("title", { required: true })} defaultValue={post?.title} variant="filled" multiline rows={1}/>
         {errors.title && (
           <span className="text-xs text-red-500"> { errors.title.message } </span>
         )}
 
-        <SlateEditor initialValue={post?.content} />
+        <label htmlFor="content" className="text-sm font-bold"> Content </label>
+        <Container>
+          <SlateEditor initialValue={post?.content} />
+        </Container>
 
-        {/* <input {...register("content", { required: true })} className='bg-gray-300 py-2 px-4'/>
-            {errors.content && <span className='text-xs text-red-500'>This field is required</span>} */}
-
+        <label htmlFor="skills" className="text-lg font-semibold mt-4"> Skills </label>
         <Controller
           name="skills"
           control={control}
@@ -147,6 +149,7 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
           )}
         />
 
+        <label htmlFor="ais" className="text-lg font-semibold mt-4"> AIs </label>
         <Controller
           name="ais"
           control={control}
@@ -162,6 +165,7 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
           )}
         />
 
+        <label htmlFor="tools" className="text-lg font-semibold mt-4"> Tools </label>
         <Controller
             name="tools"
             control={control}
@@ -177,9 +181,10 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
             )}
         />
 
-        <Button type="submit"> Update Post </Button>
+        <Button type="submit" variant="contained"> Update Post </Button>
       </form>
     </Container>
+    </>
   );
 }
 

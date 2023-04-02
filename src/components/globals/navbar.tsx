@@ -15,6 +15,7 @@ import { gql, useQuery } from '@apollo/client';
 import { Link, Skeleton } from '@mui/material';
 
 const pages = [
+  { label: 'Home', href: '/'},
   { label: 'Tools', href: '/tools' },
   { label: 'Posts', href: '/posts' },
   { label: 'Jobs', href: '/jobs' },
@@ -62,8 +63,11 @@ const meQuery = gql`
 `;
 
 
+interface NavbarProps {
+  path: string;
+}
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar({ path }: NavbarProps) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const { data, loading, error } = useQuery(meQuery);
@@ -84,7 +88,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" color='transparent' className='shadow-none px-10'>
+    <AppBar position="static" color='transparent' className='shadow-none lg:px-10'>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -100,10 +104,12 @@ function ResponsiveAppBar() {
               letterSpacing: '-0.05rem',
               color: 'inherit',
               textDecoration: 'none',
+              paddingRight: '4rem',
             }}
           >
             prompters.dev
           </Typography>
+            
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -135,9 +141,9 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map(({ label, href}) => (
-                <MenuItem key={label} onClick={handleCloseNavMenu}>
+                <MenuItem key={label} onClick={handleCloseNavMenu} selected={href === path}>
                   <Link href={href}>
-                  <Typography textAlign="center">{label}</Typography>                  
+                    <Typography textAlign="center">{label}</Typography>                  
                   </Link>
                 </MenuItem>
               ))}
@@ -162,13 +168,15 @@ function ResponsiveAppBar() {
           >
             prompters.dev
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', gap: '1rem'} }}>
             {pages.map(({ label, href }) => (
               <Button
                 key={label}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2 }}
                 href={href}
+                variant={href === path ? 'contained' : 'text'}
+                className='shadow-none'
               >
                 {label}
               </Button>
@@ -176,8 +184,8 @@ function ResponsiveAppBar() {
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2}}>
-            { !loading && !data && <Button variant="contained" color="primary" href="/api/auth/login">Login</Button> }
-            { !loading && !data && <Button variant="outlined" color="primary" href="/api/auth/login">Sign Up</Button> }
+            { !loading && !data && <Button variant="contained" color="primary" href="/api/auth/login" className='shadow-none'>Login</Button> }
+            { !loading && !data && <Button variant="outlined" color="primary" href="/api/auth/login" className='shadow-none'>Sign Up</Button> }
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>

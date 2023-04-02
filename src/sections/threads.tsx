@@ -1,8 +1,8 @@
 import React from 'react'
 import PostCard from '@/components/globals/postcard'
-import Container from '@/ui/container';
 import { gql } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
+import { Grid } from '@mui/material';
 
 const postsQuery = gql`
   query {
@@ -40,19 +40,21 @@ export default function ThreadsList() {
   if (error) return <p>Error: {error.message}</p>;
 
   const curatedPosts = data.posts.map((post: any) => {
-    const { skills, ais } = post;
+    const { skills, ais, tools } = post;
     const curatedSkills = skills.map((skill: any) => skill.skill);
     const curatedAis = ais.map((ai: any) => ai.ai);
+    const curatedTools = tools.map((tool: any) => tool.tool);
     return {
       ...post,
       skills: curatedSkills,
-      ais: curatedAis
+      ais: curatedAis,
+      tools: curatedTools
     }
   })
   
   return (
-    <div className='flex flex-wrap gap-2'>
+    <Grid container className='gap-4'>
       { curatedPosts.map((post: any) => <PostCard key={post.id} {...post} />) }
-    </div>
+    </Grid>    
   )
 }
