@@ -5,8 +5,9 @@ import { toast } from "react-hot-toast";
 import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
 import { SlBadge } from "react-icons/sl";
 import { GiRobotHelmet } from "react-icons/gi";
-import Chip from "./chip";
-import { Card, Container, Typography } from "@mui/material";
+import { BsTools } from "react-icons/bs";
+import { Card, Container, Typography, Chip } from "@mui/material";
+
 
 
 const updateVoteMutation = gql`
@@ -76,7 +77,7 @@ export default function PostCard(props: PostCardProps) {
               <Typography variant="body1" className="font-semibold mb-1"> Tools </Typography>
               <ul className="flex gap-2">
                 { tools.map((tool: any) => (
-                  <Chip key={tool.id} label={tool.title} intent="primary" icon={<SlBadge color="green"/>}/>
+                  <Chip key={tool.id} label={tool.title} icon={<BsTools/>} color="primary" className="px-2"/>
                 ))}
               </ul>
             </div>
@@ -85,7 +86,7 @@ export default function PostCard(props: PostCardProps) {
               <Typography variant="body1" className="font-semibold mb-1"> Skills </Typography>
               <ul className="flex gap-2">
                 {skills.map((skill: any) => (
-                  <Chip key={skill.id} label={skill.title} intent="primary" icon={<SlBadge color="yellow"/>}/>
+                  <Chip key={skill.id} label={skill.title} icon={<SlBadge/>} color="primary" className="px-2"/>
                 ))}
               </ul>
             </div>
@@ -94,7 +95,7 @@ export default function PostCard(props: PostCardProps) {
               <Typography variant="body1" className="font-semibold mb-1"> AI </Typography>
               <ul className="flex gap-2">
                 {ais.map((ai: any) => (
-                  <Chip key={ai.id} label={ai.title} intent="secondary" icon={<GiRobotHelmet/>}/>
+                  <Chip key={ai.id} label={ai.title} icon={<GiRobotHelmet/>} color="primary" className="px-2"/>
                 ))}
               </ul>
             </div>

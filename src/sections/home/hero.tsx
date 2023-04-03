@@ -7,14 +7,14 @@ export default function HeroSection() {
       <Grid container direction={'column'} className="justify-center items-center gap-4">
         <Grid item xs={8}>
           <Typography variant="h1" className="text-center font-semibold text-[50px]">
-            Train yourself to be more productive with AI
+            Get yourself to be more productive with AI
           </Typography>
           <Typography variant="h5" className="text-center mt-4">
-            Teach yourself to work with an AI. The next big skill of new
+            Learn to work with an AI. The next big skill of new
             generation.
           </Typography>
         </Grid>
-        <Button size="large" variant="contained"> Explore </Button>              
+        <Button size="large" variant="contained" href="/tools" className="shadow-md"> Explore Tools </Button>
       </Grid>
       
     </Container>

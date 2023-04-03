@@ -2,7 +2,9 @@ import React from "react";
 import PostCard from "@/components/globals/postcard";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { Button, Grid, TablePagination, Typography } from "@mui/material";
+import { Button, Container, Grid, TablePagination, Typography } from "@mui/material";
+import Navbar from "@/components/globals/navbar";
+import Footer from "@/sections/footer";
 
 const postsQuery = gql`
   query allPostsQuery($first: Int, $after: ID) {
@@ -79,15 +81,22 @@ export default function ThreadsList() {
 
   return (
     <>
-      <Typography variant="h4" className="my-4"> Latest Posts </Typography>
+      <Navbar path="/posts" />
+      <Container>
+        <Typography variant="h4" className="my-4">Latest Posts</Typography>
 
-      <Grid container className="gap-4">
-        {curatedPosts?.map((post: any) => (
-          <PostCard key={post.id} {...post} />
-        ))}
-      </Grid>
+        <Grid container className="gap-4">
+          {curatedPosts?.map((post: any) => (
+            <PostCard key={post.id} {...post} />
+          ))}
+        </Grid>
+        
+        <div className="my-4 flex justify-center items-center">
+            <Button variant="contained" onClick={loadMore} disabled={!hasNextPage}> Load More </Button>
+        </div>
 
-      {/* <Button variant="contained" onClick={loadMore} disabled={!hasNextPage}> Load More </Button> */}
+        <Footer/>
+      </Container>
     </>
   );
 }

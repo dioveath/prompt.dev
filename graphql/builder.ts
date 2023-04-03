@@ -3,12 +3,20 @@ import PrismaPlugin from "@pothos/plugin-prisma";
 import type PrismaTypes from "@pothos/plugin-prisma/generated";
 import prisma from "../lib/prisma";
 import { createContext } from "./context";
+import RelayPlugin from "@pothos/plugin-relay";
 
 export const builder = new SchemaBuilder<{ 
-    PrismaTypes: PrismaTypes,
-    Context: ReturnType<typeof createContext>
+    PrismaTypes: PrismaTypes;
+    Context: ReturnType<typeof createContext>;
+    Scalars: {
+        DateTime: { 
+            Input: Date;
+            Output: Date;
+        };
+    };
  }>({
-    plugins: [PrismaPlugin],
+    plugins: [PrismaPlugin, RelayPlugin],
+    relayOptions: {},
     prisma: { client: prisma }
 });
 

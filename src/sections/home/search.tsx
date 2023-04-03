@@ -15,7 +15,7 @@ export default function SearchSection() {
             multiline
             maxRows={2}
           />
-          <Button type="submit" variant="contained"> Search </Button>
+          <Button type="submit" variant="contained" className="shadow-none"> Search </Button>
         </Grid>
         {/* <Grid container className="gap-2">
           <Chip label="Ways to generate beautiful landscape"/>

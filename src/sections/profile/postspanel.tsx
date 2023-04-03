@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardActionArea,
+  CardActions,
   Container,
   Grid,
   Link,
@@ -40,6 +41,9 @@ export default function PostPanel({ posts, index, value }: PostPanelProps) {
                         <TbArrowBigUpLinesFilled className="text-2xl text-green-500 h-4 w-4"/>
                     </div>
                   </CardActionArea>
+                  <CardActions>
+                    <Button size="small" color="primary" href={`posts/mutate/${post.id}`}> Update </Button>
+                  </CardActions>
                 </Grid>
               </Card>
             ))}

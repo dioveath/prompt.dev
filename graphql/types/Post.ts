@@ -11,7 +11,7 @@ builder.prismaObject("Post", {
     votesCount: t.relationCount("votes"),
     meVoted: t.boolean({
       select: {
-        votes: true
+        votes: true,
       },
       resolve: async (parent, _args, ctx, _info) => {
         const { user } = await ctx;
@@ -23,11 +23,11 @@ builder.prismaObject("Post", {
         const votes = await prisma.votesOnPosts.findMany({
           where: {
             postId: parent.id,
-            userId: dbUser.id
-          }
+            userId: dbUser.id,
+          },
         });
         return votes.length > 0;
-      }
+      },
     }),
     slug: t.exposeString("slug"),
     published: t.exposeBoolean("published"),
@@ -41,10 +41,15 @@ builder.prismaObject("Post", {
 });
 
 builder.queryField("posts", (t) =>
-  t.prismaField({
-    type: ["Post"],
-    resolve: async (query, _parent, _args, _ctx, _info) => {
-      return await prisma.post.findMany({ ...query });
+  t.prismaConnection({
+    type: "Post",
+    cursor: "id",
+    args: {
+      trending: t.arg.boolean({ required: false }),
+    },
+    resolve: async (query, _parent, args, _ctx, _info) => {
+      const { trending } = args;
+      return await prisma.post.findMany({ ...query, orderBy: trending ? { votes: { _count: "desc" } } : { createdAt: "desc" } });
     },
   })
 );
@@ -58,7 +63,7 @@ builder.queryField("post", (t) =>
     resolve: async (_query, _parent, args, _ctx, _info) => {
       const { id } = args;
       if (id === undefined) throw new Error("No id provided");
-      const post =  await prisma.post.findUnique({ 
+      const post = await prisma.post.findUnique({
         where: { id: id.toString() },
         include: {
           _count: { select: { votes: true } },
@@ -71,10 +76,9 @@ builder.queryField("post", (t) =>
               parent: true,
               votes: true,
             },
-          },          
-        }        
+          },
+        },
       });
-
       return post;
     },
   })
@@ -87,7 +91,7 @@ builder.mutationField("createPost", (t) =>
       title: t.arg.string({ required: true }),
       content: t.arg.string({ required: true }),
       published: t.arg.boolean({ defaultValue: false, required: true }),
-      slug: t.arg.string({ required: false}),
+      slug: t.arg.string({ required: false }),
       skills: t.arg.idList(),
       ais: t.arg.idList(),
       tools: t.arg.idList(),
@@ -106,7 +110,7 @@ builder.mutationField("createPost", (t) =>
       const generatedSlug = slug || slugify(title, { lower: true, strict: true });
 
       const found = await prisma.post.findUnique({ where: { slug: generatedSlug } });
-      if(found) throw new Error("Slug already exists"); 
+      if (found) throw new Error("Slug already exists");
 
       return await prisma.post.create({
         data: {
@@ -115,27 +119,35 @@ builder.mutationField("createPost", (t) =>
           slug: generatedSlug,
           published,
           authorId: dbUser.id,
-          skills: !skills || skills.length === 0 ? undefined : {
-            createMany: {
-              data: skills.map((skillId) => ({ skillId: skillId.toString() })),
-            },
-          },
-          ais: !ais || ais.length === 0 ? undefined : {
-            createMany: {
-              data: ais?.map((aiId) => ({ aiId: aiId.toString() })),
-            },
-          },
-          tools: !tools || tools.length === 0 ? undefined : {
-            createMany: {
-              data: tools?.map((toolId) => ({ toolId: toolId.toString() })),
-            }
-          }
+          skills:
+            !skills || skills.length === 0
+              ? undefined
+              : {
+                  createMany: {
+                    data: skills.map((skillId) => ({ skillId: skillId.toString() })),
+                  },
+                },
+          ais:
+            !ais || ais.length === 0
+              ? undefined
+              : {
+                  createMany: {
+                    data: ais?.map((aiId) => ({ aiId: aiId.toString() })),
+                  },
+                },
+          tools:
+            !tools || tools.length === 0
+              ? undefined
+              : {
+                  createMany: {
+                    data: tools?.map((toolId) => ({ toolId: toolId.toString() })),
+                  },
+                },
         },
       });
     },
   })
 );
-
 
 builder.mutationField("updatePost", (t) =>
   t.prismaField({
@@ -161,9 +173,9 @@ builder.mutationField("updatePost", (t) =>
         where: { email: user.email },
       });
 
-      const post : any = await prisma.post.findUnique({ where: { id: id.toString() }, include: { skills: true, ais: true, tools: true } });
-      if(!post) throw new Error("Post not found");
-      if(dbUser?.id !== post?.authorId) throw new Error("Not authorized");
+      const post: any = await prisma.post.findUnique({ where: { id: id.toString() }, include: { skills: true, ais: true, tools: true } });
+      if (!post) throw new Error("Post not found");
+      if (dbUser?.id !== post?.authorId) throw new Error("Not authorized");
 
       const { skills: oldSkills, ais: oldAis, tools: oldTools } = post;
 
@@ -177,24 +189,33 @@ builder.mutationField("updatePost", (t) =>
           title: title || undefined,
           content: content || undefined,
           published: published || undefined,
-          skills: !skills || skills.length === 0 ? undefined : {
-            createMany: {
-              data: newSkills.map((skillId) => ({ skillId: skillId.toString() })),
-            }
-          },
-          ais: !ais || ais.length === 0 ? undefined : {
-            createMany: {
-              data: newAis.map((aiId) => ({ aiId: aiId.toString() })),
-            }
-          },
-          tools: !tools || tools.length === 0 ? undefined : {
-            createMany: {
-              data: newTools.map((toolId) => ({ toolId: toolId.toString() })),
-            }
-          }         
+          skills:
+            !skills || skills.length === 0
+              ? undefined
+              : {
+                  createMany: {
+                    data: newSkills.map((skillId) => ({ skillId: skillId.toString() })),
+                  },
+                },
+          ais:
+            !ais || ais.length === 0
+              ? undefined
+              : {
+                  createMany: {
+                    data: newAis.map((aiId) => ({ aiId: aiId.toString() })),
+                  },
+                },
+          tools:
+            !tools || tools.length === 0
+              ? undefined
+              : {
+                  createMany: {
+                    data: newTools.map((toolId) => ({ toolId: toolId.toString() })),
+                  },
+                },
         },
       });
-    }
+    },
   })
 );
 
@@ -214,25 +235,25 @@ builder.mutationField("updatePostVote", (t) =>
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
-      if(!dbUser) throw new Error("User not found");
+      if (!dbUser) throw new Error("User not found");
 
       const voteOnPost = await prisma.votesOnPosts.findFirst({
         where: { postId: id.toString(), userId: dbUser?.id },
       });
 
-      if(voteOnPost) {
+      if (voteOnPost) {
         return await prisma.post.update({
           where: { id: id.toString() },
           data: {
             votes: {
               deleteMany: {
                 id: voteOnPost.id,
-              }
-            }
+              },
+            },
           },
           include: {
             _count: { select: { votes: true } },
-          }
+          },
         });
       }
 
@@ -240,15 +261,17 @@ builder.mutationField("updatePostVote", (t) =>
         where: { id: id.toString() },
         data: {
           votes: {
-            create: [{
-              userId: dbUser?.id,
-            }]
-          }
+            create: [
+              {
+                userId: dbUser?.id,
+              },
+            ],
+          },
         },
         include: {
           _count: { select: { votes: true } },
-        }
+        },
       });
-    }
+    },
   })
 );
