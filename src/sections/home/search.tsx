@@ -13,6 +13,7 @@ export default function SearchSection() {
             variant="standard"
             fullWidth
             multiline
+            maxRows={2}
           />
           <Button type="submit" variant="contained"> Search </Button>
         </Grid>

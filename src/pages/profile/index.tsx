@@ -1,8 +1,13 @@
-import Button from "@/ui/button";
-import Container from "@/ui/container";
+import { Container, Button, Grid, Avatar, Box, Tabs, Tab } from '@mui/material';
+import Navbar from '../../components/globals/navbar';
 import { gql, useQuery } from "@apollo/client";
 import { Post } from "@prisma/client";
 import Link from "next/link";
+import TabPanel from '@/components/globals/tabpanel';
+import PostPanel from '@/sections/profile/postspanel';
+import { useState } from 'react';
+import ToolPanel from '@/sections/profile/toolspanel';
+import SettingsPanel from '@/sections/profile/settingspanel';
 
 const meQuery = gql`
   query {
@@ -16,7 +21,24 @@ const meQuery = gql`
       posts {
         id
         title
+        content
         votesCount
+        createdAt
+        tools {
+          tool {
+            id
+            title
+          }          
+        }
+      }
+      authoredTools {
+        id
+        tool {
+          id
+          title
+          shortDescription
+          lastReleased
+        }
       }
     }
   }
@@ -24,34 +46,38 @@ const meQuery = gql`
 
 export default function Profile() {
   const { data, loading, error } = useQuery(meQuery);
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Container>
-      <div>
-        <h1 className="font-bold text-lg">Profile</h1>
-        <p className="text-md font-semibold">{data.me.name}</p>
+    <>
+    <Navbar path='/'/>
+    <Container className='py-4'>
+      <Grid container className='flex-col justify-center items-center py-4 bg-gray-200 rounded-md'>
+        <Avatar alt={`${data.me.name}'s Avatar`} src={data.me.avatar} className='w-20 h-20'/>        
+        <h1 className="font-bold text-lg"> { data.me.name } </h1>
         <p>{data.me.jobTitle}</p>
         <p>{data.me.email}</p>
-      </div>
+      </Grid>
 
-      <div>
-        <h1 className="font-bold text-lg">Posts</h1>
-        {data.me.posts.map((post: Post & { votesCount: number }) => (
-          <div key={post.id} className="max-w-md w-full shadow-xl rounded-md my-4 px-4">
-            <Link href={`/posts/mutate/${post.id}`} className="">
-              <p className="text-lg">{post.title}</p>
-              <p className="text-sm">{post.votesCount} votes</p>
-            </Link>
-          </div>
-        ))}
-      </div>    
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="Posts" />
+          <Tab label="Tools" />
+          <Tab label="Settings"/>
+        </Tabs>
+      </Box>
+      <PostPanel posts={data.me.posts} index={0} value={value}/>
+      <ToolPanel tools={data.me.authoredTools.map((tool: any) => tool.tool)} index={1} value={value}/>
+      <SettingsPanel userData={data.me} index={2} value={value}/>
 
-      <Link href="/posts/create">
-        <Button> Create new Post </Button>
-      </Link>
     </Container>
+    </>
   );
 }

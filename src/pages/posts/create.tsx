@@ -69,7 +69,6 @@ type UpdatePostProps = {
 }
 
 export default function CreatePost({ post } : UpdatePostProps) {
-
   const { control, register, handleSubmit, watch, formState: { errors } } = useForm<CreatePostProps>();
   const [createPost, { data, loading, error }] = useMutation(createPostQuery);
   const { data: skillsData, loading: skillsLoading, error: skillsError } = useQuery(getSkillsQuery);
@@ -82,7 +81,7 @@ export default function CreatePost({ post } : UpdatePostProps) {
     const content = localStorage.getItem('content');
     const variables = { 
         title, 
-        content, 
+        content,
         skills: skills?.map((skill: any) => skill.id), 
         ais: ais?.map((ai: any) => ai.id), 
         tools: tools?.map((tool: any) => tool.id)

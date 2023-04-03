@@ -27,3 +27,11 @@ Write me an excellent short description for prompters.dev. It should be concise,
 - Tools - I use this feature
 - Post media content (Image)
 - Vote per User on Post (done), Vote per User on Comment
+
+Now, focus on building a best tool listing site
+- Beautify tool page
+- Set AI used 
+- Category (research for getting more category)
+- Skills (research for getting more tools)
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">writing a really great prompt for a chatbot persona is an amazingly high-leverage skill and an early example of programming in a little bit of natural language</p>&mdash; Sam Altman (@sama) <a href="https://twitter.com/sama/status/1627796054040285184?ref_src=twsrc%5Etfw">February 20, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
