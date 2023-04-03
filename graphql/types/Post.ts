@@ -167,9 +167,9 @@ builder.mutationField("updatePost", (t) =>
 
       const { skills: oldSkills, ais: oldAis, tools: oldTools } = post;
 
-      const newSkills = skills?.filter((skillId) => !oldSkills?.some((skill: any) => skill.skillId === skillId.toString())) || [];
-      const newAis = ais?.filter((aiId) => !oldAis?.some((ai: any) => ai.aiId === aiId.toString())) || [];
-      const newTools = tools?.filter((toolId) => !oldTools?.some((tool: any) => tool.toolId === toolId.toString())) || [];
+      const newSkills: any[] = skills?.filter((skillId) => !oldSkills?.some((skill: any) => skill.skillId === skillId.toString())) || [];
+      const newAis: any[] = ais?.filter((aiId) => !oldAis?.some((ai: any) => ai.aiId === aiId.toString())) || [];
+      const newTools: any[] = tools?.filter((toolId) => !oldTools?.some((tool: any) => tool.toolId === toolId.toString())) || [];
 
       return await prisma.post.update({
         where: { id: id.toString() },

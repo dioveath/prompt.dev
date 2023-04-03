@@ -1,8 +1,10 @@
-import Button from "@/ui/button";
-import Container from "@/ui/container";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+
+import Navbar from "@/components/globals/navbar";
+import { Avatar, Button, CardMedia, Chip, Container, Grid } from "@mui/material";
+import { VscLinkExternal } from "react-icons/vsc";
 
 import SuperJSON from "superjson";
 import { ToolExtended } from ".";
@@ -33,6 +35,25 @@ const toolQuery = gql`
       shortDescription
       description
       meUses
+      category {
+        id
+        title
+      }
+      ais {
+        id
+        ai {
+          id
+          title
+          avatar
+        }
+      }
+      skills {
+        id
+        skill {
+          title
+          avatar
+        }
+      }
       toolAuthors {
         id  
         author {
@@ -110,50 +131,106 @@ export default function ToolPage({ tool }: ToolProps) {
   };
 
   return (
+    <>
+    <Navbar path="/tools"/>
     <Container>
-      <div>
-        <h1 className="font-bold text-lg"> {title}</h1>
-        <p className="text-md">{website}</p>
-        <p className="text-md">{avatar}</p>
-        <p className="text-md">{shortDescription}</p>
-        <p className="text-md">{description}</p>
+      <Grid container spacing={2}>
+        <Grid item sm={12} md={6}>
+          <div className="text-4xl font-semibold my-5"> {title} </div>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col gap-2">
+              <Link href={website} className="flex items-center gap-2 font-bold">
+                <VscLinkExternal/> Visit now 
+              </Link>
+              <div className="text-lg font-medium"> {shortDescription} </div>
+              <div className="text-md"> {description} </div>
+            </div>
+          </div>
+          
+        </Grid>
 
-        <h2 className="font-semibold text-lg"> Authors </h2>
-        <ul className="flex gap-2">
-          { toolAuthors.map((usersOnTools: any) => {
-            const author = usersOnTools.author;
-            return (
-              <li key={author.id} className="text-xs font-bold">
-                <div className="w-10 h-10 overflow-clip rounded-full">
-                  <Image src={author.avatar} alt={`${author.name} Profile`} width={200} height={200}/>
-                </div>              
-              </li>
-            );
-          })}     
-        </ul>
-
-        <h2 className="font-semibold text-lg">Users</h2>
-        <ul className="flex gap-2">
-          { toolUsers?.map((usersOnTools: any) => {
-            const user = usersOnTools.user;
-            return (
-              <li key={user.id} className="text-xs font-bold">
-                <div className="w-10 h-10 overflow-clip rounded-full">
-                  <Image src={user.avatar} alt={`${user.name} Profile`} width={200} height={200}/>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div>
-        <div>
-          <label htmlFor="meToolUse"> Are you using this tool? </label>
-          <Button onClick={onToggleUseTool}> { meUses ? "You're using this tool" : "Yes" } </Button>
+        <Grid item sm={12} md={6} className="w-full">
+          <div className="w-full flex justify-center items-center bg-gray-200/50">
+            <CardMedia component="img" height="200" width="300" image={avatar || "/assets/artificial-intelligence.png"} alt="Tool Avatar" sx={{objectFit: "cover"}}/>
+          </div>
+        
+        <div className="text-lg font-semibold mt-2 mb-1"> Category </div>        
+        <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col gap-2">
+            { data.tool.category?.map((category: any) => {
+              return (
+                <Chip key={category.id} label={category.title} variant="outlined" color="primary" size="small"/>
+              );
+            })
+            }
+          </div>
         </div>
+
+        <div className="text-lg font-semibold mt-2 mb-1"> AIs </div>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col gap-2">
+            { data.tool.ais?.map((aisOnTools: any) => {
+              const ai = aisOnTools.ai;
+              return (
+                <Chip key={ai.id} label={ai.title} variant="outlined" color="primary" size="small"/>
+              );
+            }) }
+          </div>
+        </div>  
+
+        <div className="text-lg font-semibold mt-2 mb-1"> Skills </div>        
+        <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col gap-2">
+            { data.tool.skills?.map((skillsOnTools: any) => {
+              const skill = skillsOnTools.skill;
+              return (
+                <Chip key={skill.id} label={skill.title} variant="outlined" color="primary" size="small"/>
+              );
+            }) }
+          </div>
+        </div>        
+
+        <div className="text-lg font-semibold mt-2 mb-1"> Authors </div>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex gap-2">
+              { toolAuthors.map((usersOnTools: any) => {
+                const author = usersOnTools.author;
+                return (
+                  <div key={author.id} className="text-xs font-bold">
+                    <Avatar src={author.avatar} alt={`${author.name} Profile`}/>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="text-lg font-semibold mt-2 mb-1"> Users </div>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex gap-2">
+              { toolUsers?.map((usersOnTools: any) => {
+                const user = usersOnTools.user;
+                return (
+                  <div key={user.id} className="text-xs font-bold">
+                    <Avatar src={user.avatar} alt={`${user.name} Profile`}/>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+        </Grid>
+      </Grid>
+
+      <div>
+      <div>
+            <label htmlFor="meToolUse"> Are you using this tool? </label>
+            <Button onClick={onToggleUseTool}> { meUses ? "You're using this tool" : "Yes" } </Button>
+          </div>                  
       </div>
 
-    </Container>
+    </Container>    
+    </>
+    
   );
 }
 

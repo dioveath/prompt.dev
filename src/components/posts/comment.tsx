@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import AddComment from "./add_comment";
 import { CommentExtended, useCommentContext } from "@/pages/posts/[id]";
-import { Button } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
 
 type CommentCardProps = {
   comment: CommentExtended,
@@ -18,13 +18,9 @@ export default function CommentCard({ comment }: CommentCardProps) {
     <>
       <div key={comment.id} className="w-full flex flex-col gap-2">
         <div className="w-full flex items-center justify-start gap-2">
-          <Image
+          <Avatar
             alt={`${comment?.author?.name} Profile`}
-            src={comment?.author?.avatar}
-            className="rounded-full"
-            width={"40"}
-            height={"40"}
-          />
+            src={comment?.author?.avatar}/>
           <div>
             <h1 className="text-sm text-gray-500">{comment?.author?.name}</h1>
             <p className="text-black">{comment?.content}</p>

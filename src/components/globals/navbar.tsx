@@ -18,9 +18,9 @@ const pages = [
   { label: 'Home', href: '/'},
   { label: 'Tools', href: '/tools' },
   { label: 'Posts', href: '/posts' },
-  { label: 'Jobs', href: '/jobs' },
-  { label: 'Events', href: '/events' },
-  { label: 'Courses', href: '/courses'}
+  // { label: 'Jobs', href: '/jobs' },
+  // { label: 'Events', href: '/events' },
+  // { label: 'Courses', href: '/courses'}
 ];
 
 const settings = [
@@ -168,7 +168,7 @@ function ResponsiveAppBar({ path }: NavbarProps) {
           >
             prompters.dev
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', gap: '1rem'} }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', gap: '3rem'} }}>
             {pages.map(({ label, href }) => (
               <Button
                 key={label}

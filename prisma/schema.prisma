@@ -111,6 +111,7 @@ model Skill {
   title     String
   avatar    String?
   posts     SkillsOnPosts[]
+  tools     SkillsOnTools[]
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 }
@@ -139,8 +140,10 @@ model AI {
   posts       AIsOnPosts[]
   category    AICategory?  @relation(fields: [categoryId], references: [id])
   categoryId  String?      @db.ObjectId
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  tools       AIsOnTools[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model AICategory {
@@ -171,13 +174,15 @@ model Tool {
   description      String?
   avatar           String?
   website          String
-  category         ToolCategory?    @relation(fields: [categoryId], references: [id])
-  categoryId       String?          @db.ObjectId
-  posts            ToolsOnPosts[]  
-  reviews          ReviewsOnTools[]
 
-  toolAuthors      AuthorsOnTools[] @relation(name: "toolAuthors")
-  toolUsers        UsersOnTools[]   @relation(name: "toolUsers")
+  posts       ToolsOnPosts[]
+  reviews     ReviewsOnTools[]
+  category    ToolCategory?    @relation(fields: [categoryId], references: [id])
+  categoryId  String?          @db.ObjectId
+  toolAuthors AuthorsOnTools[] @relation(name: "toolAuthors")
+  toolUsers   UsersOnTools[]   @relation(name: "toolUsers")
+  ais         AIsOnTools[]     @relation(name: "toolAIs")
+  skills      SkillsOnTools[]  @relation(name: "toolSkills")
 
   published    Boolean   @default(false)
   lastReleased DateTime?
@@ -232,4 +237,30 @@ model AuthorsOnTools {
   updatedAt DateTime @updatedAt
 
   @@index([id, toolId, authorId], name: "tool_author_index")
+}
+
+model AIsOnTools {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  tool      Tool     @relation(name: "toolAIs", fields: [toolId], references: [id])
+  toolId    String   @db.ObjectId
+  ai        AI       @relation(fields: [aiId], references: [id])
+  aiId      String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, toolId, aiId], name: "tool_ai_index")
+}
+
+model SkillsOnTools {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  tool      Tool     @relation(name: "toolSkills", fields: [toolId], references: [id])
+  toolId    String   @db.ObjectId
+  skill     Skill    @relation(fields: [skillId], references: [id])
+  skillId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, toolId, skillId], name: "tool_skill_index")
 }

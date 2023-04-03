@@ -17,6 +17,7 @@ import { Comment } from "@prisma/client";
 import AddComment from "@/components/posts/add_comment";
 
 import SlateView from "@/sections/posts/slateview";
+import { Avatar } from "@mui/material";
 
 type PostProps = {
   post: string;
@@ -123,11 +124,7 @@ export default function Post({ post }: PostProps) {
       <div className="flex flex-col items-center min-h-screen py-2">
         <div className="flex flex-col items-center justify-start w-full bg-white p-6 rounded-lg shadow-xl gap-4">
           <div className="w-full flex items-center justify-start gap-2">
-            <Image alt={`${author?.name} Profile`} src={author?.avatar}
-              className="rounded-full"
-              width={"40"}
-              height={"40"}
-            />
+            <Avatar alt={`${author?.name} Profile`} src={author?.avatar} className="w-16 h-16" />
             <div>
               <h1 className="text-2xl font-bold">{title}</h1>
               <article className="text-sm text-gray-500">{author?.name}</article>

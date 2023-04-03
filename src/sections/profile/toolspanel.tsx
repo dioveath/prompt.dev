@@ -1,17 +1,16 @@
 import TabPanel from "@/components/globals/tabpanel";
+import ToolCardAdmin from "@/components/tools/toolcardadmin";
 import {
-  Avatar,
   Button,
-  Card,
-  CardActionArea,
   Container,
   Grid,
   Link,
 } from "@mui/material";
+import { Tool } from "@prisma/client";
 import React from "react";
 
 interface ToolPanelProps {
-  tools: [];
+  tools: Tool[];
   index: number;
   value: number;
 }
@@ -22,38 +21,8 @@ export default function ToolPanel({ tools, index, value }: ToolPanelProps) {
       <Grid container className="py-4" spacing={4}>
         <Grid item container xs={8}>
           <Container className="flex flex-col gap-2">
-            {tools.map((tool: any) => (
-              <Card key={tool.id} className="shadow-none">
-                <Grid item xs={12} className="">
-                  <CardActionArea
-                    className="p-4 flex flex-row justify-between items-center"
-                    href={`tools/${tool.id}`}
-                  >
-                    <div className="flex gap-2">
-                      <div>
-                        <Avatar
-                          variant="square"
-                          alt={`${tool.title}'s Profile`}
-                          src={tool.avatar}
-                          className="w-16 h-16"
-                        />
-                      </div>
-                      <div>
-                        <h3>{tool.title}</h3>
-                        <p className="text-sm font-medium text-gray-500">
-                          {tool.shortDescription}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <p className="text-sm font-medium text-gray-500">
-                        {new Date(parseInt(tool.lastReleased)).toDateString()}
-                      </p>
-                    </div>
-                  </CardActionArea>
-                </Grid>
-              </Card>
+            {tools.map((tool: Tool) => (
+              <ToolCardAdmin key={tool.id} tool={tool} />
             ))}
           </Container>
         </Grid>

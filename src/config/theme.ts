@@ -20,7 +20,7 @@ export const raleway = Raleway({
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#9333ea',
+            main: '#635cfe',
         },
         secondary: {
             main: '#19857b',

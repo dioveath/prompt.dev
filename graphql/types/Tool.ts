@@ -10,6 +10,8 @@ builder.prismaObject("Tool", {
         website: t.exposeString("website"),
         category: t.expose("category", { type: "ToolCategory", nullable: true }),
         reviews: t.relation("reviews"),
+        skills: t.relation("skills"),
+        ais: t.relation("ais"),
         toolAuthors: t.relation("toolAuthors", { type: "AuthorsOnTools" }),
         toolUsers: t.relation("toolUsers", { type: "UsersOnTools" }),
         meUses: t.boolean({
@@ -127,14 +129,17 @@ builder.mutationField("updateTool", (t) =>
         args: {
             id: t.arg.id({ required: true }),
             title: t.arg.string({ required: false }),
+            description: t.arg.string({ required: false }),            
             shortDescription: t.arg.string({ required: false }),
-            description: t.arg.string({ required: false }),
             avatar: t.arg.string({ required: false }),
             website: t.arg.string({ required: false }),
+            category: t.arg.id({ required: false }),
+            ais: t.arg.idList({ required: false }),
+            skills: t.arg.idList({ required: false }),
         },
         resolve: async (_query, _parent, args, _ctx, _info) => {
             const { user } =  await _ctx;
-            const { id, title, shortDescription, description, avatar, website } = args;
+            const { id, title, shortDescription, description, avatar, website, category, ais, skills } = args;
 
             const dbUser = await prisma.user.findUnique({
                 where: { email: user?.email },
@@ -142,15 +147,21 @@ builder.mutationField("updateTool", (t) =>
 
             if (!dbUser) throw new Error("User not found");
 
-            const tool = await prisma.tool.findUnique({
+            const tool : any = await prisma.tool.findUnique({
                 where: { id: id.toString() },
                 include: {
                     toolAuthors: true,
+                    ais: true,
+                    skills: true,
                 }
             });
 
+            const { ais: oldAis, skills: oldSkills } = tool;
+            const newAis = ais?.filter(id => !oldAis.some((oldAi: any) => oldAi.aiId === id)) || [];
+            const newSkills = skills?.filter(id => !oldSkills.some((oldSkill: any) => oldSkill.skillId === id)) || [];
+
             if (!tool) throw new Error("Tool not found");
-            const isAuthor = tool.toolAuthors.some(toolAuthor => toolAuthor.authorId === dbUser.id);
+            const isAuthor = tool.toolAuthors.some((toolAuthor: any) => toolAuthor.authorId === dbUser.id);
             if (!isAuthor) throw new Error("User is not author of this tool");
 
             return await prisma.tool.update({
@@ -161,6 +172,18 @@ builder.mutationField("updateTool", (t) =>
                     description,
                     avatar,
                     website: website?.toString(),
+                    categoryId: category?.toString(),
+                    ais: !newAis || newAis.length === 0 ? undefined : {
+                        createMany: { data: newAis?.map(id => ({ aiId: id.toString() })) },
+                    },
+                    skills: !skills || skills.length === 0 ? undefined : {
+                        createMany: { data: newSkills?.map(id => ({ skillId: id.toString() })) },
+                    }
+                },
+                include: {
+                    category: true,
+                    ais: { include: { ai: true } },
+                    skills: { include: { skill: true } },
                 }
             });
         }
@@ -192,8 +215,9 @@ builder.mutationField("deleteTool", (t) =>
             });
 
             if (!tool) throw new Error("Tool not found");
-            const isAuthor = tool.toolAuthors.some(toolAuthor => toolAuthor.userId === dbUser.id);
-            if (!isAuthor) throw new Error("User is not author of this tool");
+            
+            const isAuthor = tool.toolAuthors.some((toolAuthor: any) => toolAuthor.authorId === dbUser.id);
+            if (!isAuthor) { throw new Error("User is not author of this tool"); }
 
             return await prisma.tool.delete({
                 where: { id: id.toString() },
