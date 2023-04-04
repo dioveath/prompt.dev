@@ -34,6 +34,7 @@ builder.prismaObject("Tool", {
                 return toolUsers.length > 0;
             }
         }),
+        views: t.exposeInt("views"),
         published: t.exposeBoolean("published"),
         lastReleased: t.expose("lastReleased", { type: "String", nullable: true }),
         createdAt: t.expose("createdAt", { type: "String" }),
@@ -42,9 +43,66 @@ builder.prismaObject("Tool", {
 });
 
 builder.queryField("tools", (t) =>
-    t.prismaField({
-        type: ["Tool"],
-        resolve: (query, _parent, _args, _ctx, _info) => {
+    t.prismaConnection({
+        type: "Tool",
+        cursor: "id",
+        args: {
+            category: t.arg.id({ required: false }),
+            search: t.arg.string({ required: false }),
+            skills: t.arg.idList({ required: false }),
+            ais: t.arg.idList({ required: false }),
+            authors: t.arg.idList({ required: false }),
+            published: t.arg.boolean({ required: false }),
+            orderBy: t.arg.string({ required: false }),
+            order: t.arg.string({ required: false }),
+        },
+        resolve: (query: any, _parent, args, _ctx, _info) => {
+            const { category, search, skills, ais, authors, published, orderBy, order } = args;
+
+            if (category) {
+                query.where = {
+                    ...query.where,
+                    category: { id: category }
+                }
+            }
+
+            if (search) {
+                query.where = {
+                    ...query.where,
+                    OR: [
+                        { title: { contains: search, mode: 'insensitive' } },
+                        { shortDescription: { contains: search, mode: 'insensitive' } },
+                        { description: { contains: search, mode: 'insensitive' } },
+                        { website: { contains: search, mode: 'insensitive' } },
+                    ]
+                }
+            }
+
+            if (skills && skills.length > 0) {
+                console.log(skills);
+                query.where = {
+                    ...query.where,
+                    skills: { 
+                        some: { skillId: { in: skills }} 
+                    } 
+                }
+            }
+
+            if (ais && ais.length > 0) {
+                query.where = {
+                    ...query.where,
+                    ais: { some: { id: { in: ais } } }
+                }
+            }
+
+            if(orderBy) {
+                query.orderBy = {
+                    [orderBy]: order ? order : "desc"
+                }
+            }
+
+            console.log(query);
+
             return prisma.tool.findMany({ ...query });
         }
     })

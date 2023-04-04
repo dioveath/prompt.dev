@@ -257,6 +257,7 @@ builder.mutationField("updatePostVote", (t) =>
         });
       }
 
+
       return await prisma.post.update({
         where: { id: id.toString() },
         data: {

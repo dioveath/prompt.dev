@@ -2,7 +2,7 @@ import React from "react";
 import PostCard from "@/components/globals/postcard";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { Button, Container, Grid, TablePagination, Typography } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Container, Grid, TablePagination, Typography } from "@mui/material";
 import Navbar from "@/components/globals/navbar";
 import Footer from "@/sections/footer";
 
@@ -50,9 +50,22 @@ const PAGE_SIZE = 6;
 export default function ThreadsList() {
   const { data, loading, error, fetchMore } = useQuery(postsQuery, { variables: { first: PAGE_SIZE } });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading)
+  return (
+    <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+      <CircularProgress color="inherit" />
+    </Backdrop>
+  );
 
+if (error)
+  return (
+    <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+      <Typography variant="h4">
+        500 Error: {error.message}
+      </Typography>
+    </Backdrop>
+  );
+  
   const { endCursor, hasNextPage } = data.posts.pageInfo;
 
   const curatedPosts = data.posts.edges.map((edge: any) => {

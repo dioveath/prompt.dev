@@ -2,7 +2,7 @@ import React from "react";
 import PostCard from "@/components/globals/postcard";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { Button, Grid, TablePagination, Typography } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Grid, TablePagination, Typography } from "@mui/material";
 
 const postsQuery = gql`
   query allPostsQuery($first: Int, $after: ID) {
@@ -48,8 +48,19 @@ const PAGE_SIZE = 6;
 export default function ThreadsList() {
   const { data, loading, error, fetchMore } = useQuery(postsQuery, { variables: { first: PAGE_SIZE } });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading)
+    return (
+      <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    );
+
+  if (error)
+    return (
+      <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+        <Typography variant="h4">500 Error: {error.message}</Typography>
+      </Backdrop>
+    );
 
   const { endCursor, hasNextPage } = data.posts.pageInfo;
 
@@ -79,7 +90,10 @@ export default function ThreadsList() {
 
   return (
     <>
-      <Typography variant="h4" className="my-4"> Latest Posts </Typography>
+      <Typography variant="h4" className="my-4">
+        {" "}
+        Latest Posts{" "}
+      </Typography>
 
       <Grid container className="gap-4">
         {curatedPosts?.map((post: any) => (

@@ -266,6 +266,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             notFound: true,
         }
 
+    prisma.tool.update({
+      where: { id: id },
+      data: {
+        views: { increment: 1 }
+      }
+    });
+
     return {
         props: {
             tool: SuperJSON.stringify(tool),
