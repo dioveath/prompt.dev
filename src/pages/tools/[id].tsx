@@ -12,6 +12,8 @@ import Image from "next/image";
 import { isValidID } from "@/helpers/isValidID";
 import { toast } from "react-hot-toast";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import ClaimToolDialog from "@/sections/tools/claimtooldialog";
+import { useState } from "react";
 
 const meQuery = gql`
   query {
@@ -107,16 +109,17 @@ type ToolProps = {
   tool: string;
 };
 
-export default function ToolPage({ tool }: ToolProps) {
-  const { id, title, website, avatar, shortDescription, description, toolAuthors } = SuperJSON.parse<ToolExtended>(tool);
+export default function ToolPage({ tool: toolJSON }: ToolProps) {
+  const tool = SuperJSON.parse<ToolExtended>(toolJSON);
+  const { id, title, website, avatar, shortDescription, description, toolAuthors } = tool;
   const { data, loading, error } = useQuery(toolQuery, { variables: { id: id } });
   const [updateMeOnToolUsers, { data: mutatedData, loading: mutateLoading, error: mutateError }] = useMutation(updateMeOnToolUsersMutation);
   const { user, error: userError, isLoading: userLoading } = useUser();
 
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
-
 
   const { meUses, toolUsers } = data.tool;
 
@@ -221,9 +224,10 @@ export default function ToolPage({ tool }: ToolProps) {
             { user && <Button onClick={onToggleUseTool}> {meUses ? "You're using this tool, Stop Using" : "Yes"} </Button> }
           </div>
           <div>
-
+            { !toolAuthors.length && !user && <Button href="/api/auth/login" variant="contained">Sign In to Claim your tool</Button> }
+            { !toolAuthors.length && user && <Button onClick={() => setClaimDialogOpen(true)} variant="contained">Claim Your Tool</Button> }
+            <ClaimToolDialog open={claimDialogOpen} setOpen={setClaimDialogOpen} tool={tool}/>
           </div>
-          
         </div>
       </Container>
     </>

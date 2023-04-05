@@ -18,6 +18,8 @@ import "./types/ToolsOnPosts";
 import "./types/SkillsOnTools";
 import "./types/AIsOnTools";
 
+import "./types/ToolClaimRequest";
+
 
 import { builder } from "./builder";
 
