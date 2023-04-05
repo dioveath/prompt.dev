@@ -53,7 +53,7 @@ export type ToolExtended = Tool & {
   toolUsers: User[];
 };
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 10;
 
 interface FilterProps {
   search?: string;
@@ -126,8 +126,8 @@ export default function ToolsPage() {
             Take Competitive Advantage.{" "}
           </Typography>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full flex gap-5 items-end sm:px-10 md:px-20">
-        <Grid container spacing={2} className="my-4 items-center">
+        <form onSubmit={handleSubmit(onSubmit)} className="">
+        <Grid container spacing={2} className="my-4 items-end">
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <TextField
                 {...register("search", { required: false })}

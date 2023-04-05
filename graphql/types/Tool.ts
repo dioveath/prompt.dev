@@ -101,12 +101,21 @@ builder.queryField("tools", (t) =>
                 }
             }
 
-            console.log(query);
-
-            return prisma.tool.findMany({ ...query });
+            return prisma.tool.findMany({ ...query});
         }
     })
 );
+
+
+// builder.queryField("trendingTools", (t) =>
+//     t.prismaConnection({
+//         type: "Tool",
+//         cursor: "id",
+//         args: {
+//             category: t.arg.id({ required: false }),
+//             search: t.arg.string({ required: false }),
+//             skills: t.arg.idList({ required: false }),
+
 
 builder.queryField("tool", (t) =>
     t.prismaField({

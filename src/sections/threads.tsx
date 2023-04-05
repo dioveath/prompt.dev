@@ -91,8 +91,7 @@ export default function ThreadsList() {
   return (
     <>
       <Typography variant="h4" className="my-4">
-        {" "}
-        Latest Posts{" "}
+        Latest Posts
       </Typography>
 
       <Grid container className="gap-4">

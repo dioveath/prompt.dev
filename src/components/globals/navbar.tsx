@@ -17,7 +17,7 @@ import { Link, Skeleton } from '@mui/material';
 const pages = [
   { label: 'Home', href: '/'},
   { label: 'Tools', href: '/tools' },
-  { label: 'Posts', href: '/posts' },
+  { label: 'Community', href: '/posts' },
   // { label: 'Jobs', href: '/jobs' },
   // { label: 'Events', href: '/events' },
   // { label: 'Courses', href: '/courses'}

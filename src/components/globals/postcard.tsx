@@ -70,32 +70,32 @@ export default function PostCard(props: PostCardProps) {
           </div>
         </div>
         <Link href={`posts/${id}`} className="flex-1 py-2 px-4 no-underline">
-          <Typography variant="h6" className="font-bold text-2xl mb-1 text-black"> {title} </Typography>
-          <Typography variant="body1" className="text-black"> {summary} </Typography>
+          <Typography variant="h6" className="font-semibold mb-1 text-black"> {title} </Typography>
+          <Typography variant="body2" className="text-black"> {summary} </Typography>
           <div className="flex gap-4">
             <div>
-              <Typography variant="body1" className="font-semibold mb-1"> Tools </Typography>
+              <Typography variant="body2" className="font-semibold mb-1"> Tools </Typography>
               <ul className="flex gap-2">
                 { tools.map((tool: any) => (
-                  <Chip key={tool.id} label={tool.title} icon={<BsTools/>} color="primary" className="px-2"/>
+                  <Chip key={tool.id} label={tool.title} icon={<BsTools/>} color="primary" className="px-2" size="small"/>
                 ))}
               </ul>
             </div>
             
             <div>
-              <Typography variant="body1" className="font-semibold mb-1"> Skills </Typography>
+              <Typography variant="body2" className="font-semibold mb-1"> Skills </Typography>
               <ul className="flex gap-2">
                 {skills.map((skill: any) => (
-                  <Chip key={skill.id} label={skill.title} icon={<SlBadge/>} color="primary" className="px-2"/>
+                  <Chip key={skill.id} label={skill.title} icon={<SlBadge/>} color="primary" className="px-2" size="small"/>
                 ))}
               </ul>
             </div>
             
             <div>
-              <Typography variant="body1" className="font-semibold mb-1"> AI </Typography>
+              <Typography variant="body2" className="font-semibold mb-1"> AI </Typography>
               <ul className="flex gap-2">
                 {ais.map((ai: any) => (
-                  <Chip key={ai.id} label={ai.title} icon={<GiRobotHelmet/>} color="primary" className="px-2"/>
+                  <Chip key={ai.id} label={ai.title} icon={<GiRobotHelmet/>} color="primary" className="px-2" size="small"/>
                 ))}
               </ul>
             </div>

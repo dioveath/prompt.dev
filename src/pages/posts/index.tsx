@@ -45,7 +45,7 @@ const postsQuery = gql`
   }
 `;
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 10;
 
 export default function ThreadsList() {
   const { data, loading, error, fetchMore } = useQuery(postsQuery, { variables: { first: PAGE_SIZE } });
@@ -96,7 +96,7 @@ if (error)
     <>
       <Navbar path="/posts" />
       <Container>
-        <Typography variant="h4" className="my-4">Latest Posts</Typography>
+        <Typography variant="h5" className="my-4">Latest Posts</Typography>
 
         <Grid container className="gap-4">
           {curatedPosts?.map((post: any) => (
