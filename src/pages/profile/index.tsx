@@ -36,8 +36,11 @@ const meQuery = gql`
         tool {
           id
           title
+          avatar
+          website
           shortDescription
           lastReleased
+          published
         }
       }
     }

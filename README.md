@@ -14,19 +14,22 @@ Write me an excellent short description for prompters.dev. It should be concise,
 - User system
 
 - Blog Posting system (curate for AI tools like a prompt label and prompt input field)
-- Voting system, Views System
-- Comment/Replies
 - Sharing post in social media (SEO friendly)
-- Add slug
+- Add slug (done)
 
-- Username System
+- Username System (done)
 
 - Product Posting Feature (done)
 - Tagging system to write posts on the product (ai) (done)
 - Helpful votes system, Did it solved your problem? Boost productivity level 0-5
-- Tools - I use this feature
+- Tools - I use this feature (done)
 - Post media content (Image)
-- Vote per User on Post (done), Vote per User on Comment
+- Vote per User on Post (done), Vote per User on Comment (done)
+
+
+- Fix to show only published tools, posts (done)
+- Fix updating skills, ais, in prisma db (done)
+- Implement share feature for post & tools
 
 Now, focus on building a best tool listing site
 - Beautify tool page

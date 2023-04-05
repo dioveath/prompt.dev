@@ -6,8 +6,8 @@ import { Grid, Link, Skeleton, Typography } from "@mui/material";
 import React from "react";
 
 const getToolsQuery = gql`
-  query ($first: Int, $after: ID, $orderBy: String, $order: String, $search: String, $skills: [ID!]) {
-    tools(first: $first, after: $after, orderBy: $orderBy, order: $order, search: $search, skills: $skills) {
+  query ($first: Int, $after: ID, $orderBy: String, $order: String, $search: String, $skills: [ID!], $published: Boolean) {
+    tools(first: $first, after: $after, orderBy: $orderBy, order: $order, search: $search, skills: $skills, published: $published) {
       pageInfo {
         endCursor
         hasNextPage
@@ -37,7 +37,7 @@ const getToolsQuery = gql`
 const PAGE_SIZE = 3;
 
 export default function TrendingToolsSection() {
-  const { data, loading, error, fetchMore } = useQuery(getToolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc" } });
+  const { data, loading, error, fetchMore } = useQuery(getToolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc", published: true } });
 
     if(data) {
         data.tools.edges.forEach((element: any) => {

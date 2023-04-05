@@ -107,12 +107,12 @@ export default function MutateToolPage({ tool: toolJSON }: MutateToolPageProps) 
       await toast.promise(updateTool({ variables: { 
         id, title, shortDescription, description, avatar, website, category: category?.id, 
         ais: ais?.map((ai: AI) => ai.id), skills: skills?.map((skill: Skill) => skill.id) } }), {
-        loading: "Creating AI Tool 🔃🔃🔃",
-        success: "AI Tool created successfully! 🎉🎉🎉",
-        error: "Error creating AI Tool 😢😢😢" + error,
+        loading: "Updating AI Tool 🔃🔃🔃",
+        success: "AI Tool updating successfully! 🎉🎉🎉",
+        error: "Error updating AI Tool 😢😢😢" + error,
       });
     } catch (error) {
-      toast.error("Error creating AI Tool😢😢😢");
+      toast.error("Error updating AI Tool😢😢😢");
     }
   };
 
@@ -122,29 +122,24 @@ export default function MutateToolPage({ tool: toolJSON }: MutateToolPageProps) 
       <Container>
         <Grid container className="my-4">
           <Grid item xs={12} justifyContent={"center"}>
-            <h1 className="font-bold text-2xl my-4">Submit cool AI Tool </h1>
+            <h1 className="font-bold text-2xl my-4">Update <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 ">{title}</span> Tool</h1>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2  ">
               <label htmlFor="title">Title</label>
-              <TextField type="text" {...register("title", { required: true })} variant="filled" multiline maxRows={1} defaultValue={title}/>
-              {errors.title && <span className="text-red-500 text-xs"> {errors.title.message} </span>}
+              <TextField type="text" {...register("title", { required: "Title is required" })} variant="filled" multiline rows={1} defaultValue={title} helperText={errors.title?.message} error={!!errors.title}/>
 
               <label htmlFor="shortDescription">Short Description</label>
-              <TextField type="text" {...register("shortDescription")} variant="filled" multiline rows={2} defaultValue={shortDescription}/>
-              {errors.shortDescription && <span className="text-red-500 text-xs"> {errors.shortDescription.message}</span>}
+              <TextField type="text" {...register("shortDescription", { required: "Short Description is required", maxLength: { value: 64, message: "Can't be more than 64 chars"} })} variant="filled" multiline rows={2} defaultValue={shortDescription} helperText={errors.shortDescription?.message} error={!!errors.shortDescription} />
 
               <label htmlFor="description">Description</label>
-              <TextField type="text" {...register("description")} variant="filled" multiline rows={4} defaultValue={description}/>
-              {errors.description && <span className="text-red-500 text-xs"> {errors.description.message}</span>}
+              <TextField type="text" {...register("description", { required: "Description is required", maxLength: { value: 2048, message: "Can't be more than 2048 chars" } })} variant="filled" multiline rows={4} defaultValue={description} helperText={errors.description?.message} error={!!errors.description}/>
 
               <Grid container spacing={4}>
                 <Grid item xs={12} lg={6} className="flex flex-col gap-2">
                   <label htmlFor="website">Website</label>
-                  <TextField type="text" {...register("website", { required: true })} variant="filled" multiline maxRows={1} defaultValue={website}/>
-                  {errors.website && <span className="text-red-500 text-xs"> {errors.website.message}</span>}
+                  <TextField type="text" {...register("website", { required: "Website is required" })} variant="filled" multiline maxRows={1} defaultValue={website} helperText={errors.website?.message} error={!!errors.website}/>
 
                   <label htmlFor="avatar">Avatar</label>
-                  <TextField type="text" {...register("avatar")} variant="filled" multiline maxRows={1} defaultValue={avatar}/>
-                  {errors.avatar && <span className="text-red-500 text-xs"> {errors.avatar.message}</span>}
+                  <TextField type="text" {...register("avatar")} variant="filled" multiline maxRows={1} defaultValue={avatar} helperText={errors.avatar?.message} error={!!errors.avatar}/>
                 </Grid>
 
                 <Grid item xs={12} lg={6} className="flex flex-col gap-2">
@@ -204,7 +199,7 @@ export default function MutateToolPage({ tool: toolJSON }: MutateToolPageProps) 
               </Grid>
 
               <Button type="submit" variant="contained">
-                Submit Tool
+                Update Tool
               </Button>
             </form>
           </Grid>

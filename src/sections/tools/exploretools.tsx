@@ -10,8 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 const Select = dynamic(import("react-select"), { ssr: false });
 
 const toolsQuery = gql`
-  query ($first: Int, $after: ID, $orderBy: String, $order: String, $search: String, $skills: [ID!]) {
-    tools(first: $first, after: $after, orderBy: $orderBy, order: $order, search: $search, skills: $skills) {
+  query ($first: Int, $after: ID, $orderBy: String, $order: String, $search: String, $skills: [ID!], $published: Boolean) {
+    tools(first: $first, after: $after, orderBy: $orderBy, order: $order, search: $search, skills: $skills, published: $published) {
       pageInfo {
         endCursor
         hasNextPage
@@ -68,7 +68,7 @@ export default function ExploreToolsSection() {
     reset,
     formState: { errors },
   } = useForm<FilterProps>({ defaultValues: { search: "", category: "" } });
-  const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "createdAt", order: "desc", search: "", skills: [] } });
+  const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "createdAt", order: "desc", search: "", skills: [], published: true } });
   
   if (loading)
     return (

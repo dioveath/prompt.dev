@@ -86,7 +86,7 @@ export default function CreateAIPage() {
       toast.promise(createAI({ variables: { title, shortDescription, description, avatar, website, categoryId, ais: aiIds, skills: skillIds } }), {
         loading: "Creating AI Tool 🔃🔃🔃",
         success: "AI Tool created successfully! 🎉🎉🎉",
-        error: "Error creating AI Tool 😢😢😢" + error,
+        error: "Error creating AI Tool 😢😢😢, Please try again later",
       });
       console.log(data);
     } catch (error) {
@@ -100,25 +100,21 @@ export default function CreateAIPage() {
       <Container>
         <Grid container className="my-4">
           <Grid item xs={12} justifyContent={"center"}>
-            <h1 className="font-bold text-2xl my-4">Submit you cool AI Tool with us </h1>
+            <h1 className="font-bold text-2xl my-4">Submit you cool <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"> AI Tool </span> with us </h1>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2  ">
-              <label htmlFor="title">Title</label>
-              <TextField type="text" {...register("title", { required: true })} variant="filled" multiline maxRows={1} />
-              {errors.title && <span className="text-red-500 text-xs"> {errors.title.message} </span>}
+<label htmlFor="title">Title</label>
+              <TextField type="text" {...register("title", { required: "Title is required" })} variant="filled" multiline rows={1} helperText={errors.title?.message} error={!!errors.title}/>
 
               <label htmlFor="shortDescription">Short Description</label>
-              <TextField type="text" {...register("shortDescription")} variant="filled" multiline rows={2} maxRows={2} />
-              {errors.shortDescription && <span className="text-red-500 text-xs"> {errors.shortDescription.message}</span>}
+              <TextField type="text" {...register("shortDescription", { required: "Short Description is required", maxLength: { value: 64, message: "Can't be more than 64 chars"} })} variant="filled" multiline rows={2}  helperText={errors.shortDescription?.message} error={!!errors.shortDescription} />
 
               <label htmlFor="description">Description</label>
-              <TextField type="text" {...register("description")} variant="filled" multiline rows={4} maxRows={4} />
-              {errors.description && <span className="text-red-500 text-xs"> {errors.description.message}</span>}
+              <TextField type="text" {...register("description", { required: "Description is required", maxLength: { value: 2048, message: "Can't be more than 2048 chars" } })} variant="filled" multiline rows={4} helperText={errors.description?.message} error={!!errors.description}/>
 
               <Grid container spacing={4}>
                 <Grid item xs={12} lg={6} className="flex flex-col gap-2">
                   <label htmlFor="website">Website</label>
-                  <TextField type="text" {...register("website", { required: true })} variant="filled" multiline maxRows={1} />
-                  {errors.website && <span className="text-red-500 text-xs"> {errors.website.message}</span>}
+                  <TextField type="text" {...register("website", { required: "Website is required" })} variant="filled" multiline maxRows={1} helperText={errors.website?.message} error={!!errors.website}/>
 
                   <label htmlFor="avatar">Avatar</label>
                   <TextField type="text" {...register("avatar")} variant="filled" multiline maxRows={1} />

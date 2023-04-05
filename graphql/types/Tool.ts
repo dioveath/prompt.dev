@@ -101,7 +101,12 @@ builder.queryField("tools", (t) =>
                 }
             }
 
-            console.log(query);            
+            if(published){
+                query.where = {
+                    ...query.where,
+                    published: true
+                }
+            }
 
             return prisma.tool.findMany({ ...query });
         }
@@ -206,10 +211,11 @@ builder.mutationField("updateTool", (t) =>
             category: t.arg.id({ required: false }),
             ais: t.arg.idList({ required: false }),
             skills: t.arg.idList({ required: false }),
+            published: t.arg.boolean({ required: false })
         },
         resolve: async (_query, _parent, args, _ctx, _info) => {
             const { user } =  await _ctx;
-            const { id, title, shortDescription, description, avatar, website, category, ais, skills } = args;
+            const { id, title, shortDescription, description, avatar, website, category, ais, skills, published } = args;
 
             const dbUser = await prisma.user.findUnique({
                 where: { email: user?.email },
@@ -248,17 +254,61 @@ builder.mutationField("updateTool", (t) =>
                     },
                     skills: !skills || skills.length === 0 ? undefined : {
                         createMany: { data: newSkills?.map(id => ({ skillId: id.toString() })) },
-                    }
+                    },
+                    published: published ?? undefined
                 },
                 include: {
                     category: true,
                     ais: { include: { ai: true } },
                     skills: { include: { skill: true } },
-                }
+                }, 
             });
         }
     })
 );
+
+builder.mutationField("publishTool", (t) =>
+    t.prismaField({
+        type: "Tool",
+        args: {
+            id: t.arg.id({ required: true }),
+        },
+        resolve: async (_query, _parent, args, _ctx, _info) => {
+            const { user } =  await _ctx;
+            const { id } = args;
+            if(!user) throw new Error("User not found");
+            if(!id) throw new Error("Tool not found");
+
+            const dbUser = await prisma.user.findUnique({
+                where: { email: user?.email },
+            });
+            if (!dbUser) throw new Error("User not found");
+
+            const tool = await prisma.tool.findUnique({
+                where: { id: id.toString() },
+                include: {
+                    toolAuthors: true,
+                }
+            });
+            if (!tool) throw new Error("Tool not found");
+            const isAuthor = tool.toolAuthors.some((toolAuthor: any) => toolAuthor.authorId === dbUser.id);
+            if (!isAuthor) throw new Error("User is not author of this tool");
+
+            return await prisma.tool.update({
+                where: { id: id.toString() },
+                data: {
+                    published: !tool.published,
+                    // if tool was already published, we're unpublishing the tool. so dont update lastReleased date                    
+                    lastReleased: tool.published ? undefined : new Date() 
+                },
+            });
+        }
+    })
+);
+            
+
+
+
 
 
 builder.mutationField("deleteTool", (t) =>
