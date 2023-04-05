@@ -101,20 +101,12 @@ builder.queryField("tools", (t) =>
                 }
             }
 
-            return prisma.tool.findMany({ ...query});
+            console.log(query);            
+
+            return prisma.tool.findMany({ ...query });
         }
     })
 );
-
-
-// builder.queryField("trendingTools", (t) =>
-//     t.prismaConnection({
-//         type: "Tool",
-//         cursor: "id",
-//         args: {
-//             category: t.arg.id({ required: false }),
-//             search: t.arg.string({ required: false }),
-//             skills: t.arg.idList({ required: false }),
 
 
 builder.queryField("tool", (t) =>
@@ -161,16 +153,20 @@ builder.mutationField("createTool", (t) =>
             description: t.arg.string({ required: false }),
             avatar: t.arg.string({ required: false }),
             website: t.arg.string({ required: true }),
+            categoryId: t.arg.id({ required: false }),            
+            skills: t.arg.idList({ required: false }),
+            ais: t.arg.idList({ required: false }),
         },
         resolve: async (_query, _parent, args, _ctx, _info) => {
             const { user } =  await _ctx;
-            const { title, shortDescription, description, avatar, website } = args;
-
-            const dbUser = await prisma.user.findUnique({
-                where: { email: user?.email },
-            });
-
-            if (!dbUser) throw new Error("User not found");
+            const { title, shortDescription, description, avatar, website, categoryId, skills, ais } = args;
+            
+            let dbUser; 
+            if(user) {
+                dbUser = await prisma.user.findUnique({
+                    where: { email: user?.email },
+                });
+            }
 
             return await prisma.tool.create({
                 data: {
@@ -179,11 +175,18 @@ builder.mutationField("createTool", (t) =>
                     description,
                     avatar,
                     website,
-                    toolAuthors: {
+                    toolAuthors: !dbUser ? undefined : {
                         create: {
-                            authorId: dbUser.id,
+                            authorId: dbUser?.id,
                         }
-                    }
+                    },
+                    skills: skills && skills.length > 0 ? {
+                        createMany: { data: skills?.map((skillId) => ({ skillId: skillId.toString() })) }
+                    } : undefined,
+                    ais: ais && ais.length > 0 ? {
+                        createMany: { data: ais?.map((aiId) => ({ aiId: aiId.toString() })) }
+                    } : undefined,
+                    categoryId: categoryId?.toString()
                 }
             });
         }

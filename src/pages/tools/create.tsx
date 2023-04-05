@@ -9,8 +9,8 @@ const Select = dynamic(import("react-select"), { ssr: false });
 import Footer from "@/sections/footer";
 
 const createAICategoryQuery = gql`
-  mutation CreateTool($title: String!, $description: String, $shortDescription: String, $avatar: String, $website: String!) {
-    createTool(title: $title, description: $description, shortDescription: $shortDescription, avatar: $avatar, website: $website) {
+  mutation CreateTool($title: String!, $description: String, $shortDescription: String, $avatar: String, $website: String!, $categoryId: ID, $ais: [ID!], $skills: [ID!]) {
+    createTool(title: $title, description: $description, shortDescription: $shortDescription, avatar: $avatar, website: $website, categoryId: $categoryId, ais: $ais, skills: $skills) {
       id
       title
       toolAuthors {
@@ -77,9 +77,13 @@ export default function CreateAIPage() {
   const { data: toolCategoryData, loading: toolCategoryLoading, error: toolCategoryError } = useQuery(toolCategoryQuery);
 
   const onSubmit: SubmitHandler<CreateToolProps> = (data) => {
-    const { title, shortDescription, description, avatar, website } = data;
+    const { title, shortDescription, description, avatar, website, categoryId, ais, skills } = data;
+
+    let aiIds: any = ais?.map((ai: any) => ai.id);
+    let skillIds: any = skills?.map((skill: any) => skill.id);
+
     try {
-      toast.promise(createAI({ variables: { title, shortDescription, description, avatar, website } }), {
+      toast.promise(createAI({ variables: { title, shortDescription, description, avatar, website, categoryId, ais: aiIds, skills: skillIds } }), {
         loading: "Creating AI Tool 🔃🔃🔃",
         success: "AI Tool created successfully! 🎉🎉🎉",
         error: "Error creating AI Tool 😢😢😢" + error,
@@ -92,11 +96,11 @@ export default function CreateAIPage() {
 
   return (
     <>
-      <Navbar path="/tools" />
+      <Navbar path="/tools/create" />
       <Container>
         <Grid container className="my-4">
           <Grid item xs={12} justifyContent={"center"}>
-            <h1 className="font-bold text-2xl my-4">Submit cool AI Tool </h1>
+            <h1 className="font-bold text-2xl my-4">Submit you cool AI Tool with us </h1>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2  ">
               <label htmlFor="title">Title</label>
               <TextField type="text" {...register("title", { required: true })} variant="filled" multiline maxRows={1} />

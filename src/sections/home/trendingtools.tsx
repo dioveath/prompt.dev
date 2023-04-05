@@ -34,10 +34,10 @@ const getToolsQuery = gql`
   }
 `;
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 3;
 
 export default function TrendingToolsSection() {
-  const { data, loading, error, fetchMore } = useQuery(getToolsQuery, { variables: { first: PAGE_SIZE, sortBy: "views", sort: "desc" } });
+  const { data, loading, error, fetchMore } = useQuery(getToolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc" } });
 
     if(data) {
         data.tools.edges.forEach((element: any) => {
@@ -52,7 +52,7 @@ export default function TrendingToolsSection() {
         <Typography variant="h6"> Tools that are trending in the community </Typography>
       </div>
 
-      <Grid container rowSpacing={2} columnSpacing={10} className="my-5">
+      <Grid container rowSpacing={2} columnSpacing={0} className="my-5">
         {loading && (
           <>
             {[0, 1, 2].map((i) => (

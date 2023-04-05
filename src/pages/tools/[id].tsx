@@ -116,6 +116,8 @@ export default function ToolPage({ tool }: ToolProps) {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
+
+
   const { meUses, toolUsers } = data.tool;
 
   const onToggleUseTool = async () => {
@@ -212,12 +214,16 @@ export default function ToolPage({ tool }: ToolProps) {
           </Grid>
         </Grid>
 
-        <div>
+        <div className="flex flex-col gap-4">
           <div>
             <label htmlFor="meToolUse" className="mr-2"> Are you using this tool? </label>
-            { !user && <Button href="/api/auth/login" variant="outlined"> Sign in to get included in tool </Button> }
+            { !user && <Button href="/api/auth/login" variant="outlined"> Yes </Button> }
             { user && <Button onClick={onToggleUseTool}> {meUses ? "You're using this tool, Stop Using" : "Yes"} </Button> }
           </div>
+          <div>
+
+          </div>
+          
         </div>
       </Container>
     </>

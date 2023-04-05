@@ -18,9 +18,7 @@ const pages = [
   { label: 'Home', href: '/'},
   { label: 'Tools', href: '/tools' },
   { label: 'Community', href: '/posts' },
-  // { label: 'Jobs', href: '/jobs' },
-  // { label: 'Events', href: '/events' },
-  // { label: 'Courses', href: '/courses'}
+  { label: 'Submit Tool', href: '/tools/create' },
 ];
 
 const settings = [
