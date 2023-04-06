@@ -15,6 +15,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Link, Skeleton, useTheme } from "@mui/material";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { ColorModeContext } from "@/pages/_app";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 const pages = [
   { label: "Home", href: "/" },
@@ -60,7 +61,8 @@ interface NavbarProps {
 function ResponsiveAppBar({ path }: NavbarProps) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const { data, loading, error } = useQuery(meQuery);
+  const { user } = useUser();
+  const { data, loading, error } = useQuery(meQuery, { skip: !user });
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { toggleColorMode } = React.useContext(ColorModeContext);

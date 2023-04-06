@@ -39,12 +39,6 @@ const PAGE_SIZE = 3;
 export default function TrendingToolsSection() {
   const { data, loading, error, fetchMore } = useQuery(getToolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc", published: true } });
 
-    if(data) {
-        data.tools.edges.forEach((element: any) => {
-            console.log(element);
-        });
-    }
-
   return (
     <>
       <div>
@@ -56,11 +50,11 @@ export default function TrendingToolsSection() {
         {loading && (
           <>
             {[0, 1, 2].map((i) => (
-              <>
+              <React.Fragment key={i}>
                 <Grid item xs={12} sm={7} md={5} lg={4}>
                   <Skeleton key={i} variant="rectangular" width={300} height={300} className="mx-2" />
                 </Grid>
-              </>
+              </React.Fragment>
             ))}
           </>
         )}
