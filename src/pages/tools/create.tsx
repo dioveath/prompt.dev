@@ -100,7 +100,7 @@ export default function CreateAIPage() {
       <Container>
         <Grid container className="my-4">
           <Grid item xs={12} justifyContent={"center"}>
-            <h1 className="font-bold text-2xl my-4">Submit you cool <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"> AI Tool </span> with us </h1>
+            <h1 className="font-bold text-2xl my-4">Submit your cool <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"> AI Tool </span> with us </h1>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2  ">
 <label htmlFor="title">Title</label>
               <TextField type="text" {...register("title", { required: "Title is required" })} variant="filled" multiline rows={1} helperText={errors.title?.message} error={!!errors.title}/>

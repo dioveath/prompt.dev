@@ -29,11 +29,11 @@ Write me an excellent short description for prompters.dev. It should be concise,
 
 - Fix to show only published tools, posts (done)
 - Fix updating skills, ais, in prisma db (done)
-- Implement share feature for post & tools
+- Implement share feature for post & tools (done)
 
 Now, focus on building a best tool listing site
-- Beautify tool page
-- Set AI used 
+- Beautify tool page (done)
+- Set AI used  (done)
 - Category (research for getting more category)
 - Skills (research for getting more tools)
 

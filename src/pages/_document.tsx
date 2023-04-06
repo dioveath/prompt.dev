@@ -5,6 +5,7 @@ import createEmotionCache from '@/lib/createEmotionCache';
 import React from 'react';
 import { MyAppProps } from './_app';
 
+
 interface MyDocumentProps extends DocumentProps {
   emotionStyleTags: JSX.Element[];
 }
@@ -45,7 +46,6 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          {/* <meta name='theme-color' content={theme.palette.primary.main}/> */}
           <link rel="shortcut ico" href="/favicon.ico" />
           <meta name='emotion-insertion-point' content=''/>
           { emotionStyleTags }

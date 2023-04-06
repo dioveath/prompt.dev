@@ -17,6 +17,7 @@ import AddComment from "@/components/posts/add_comment";
 
 import SlateView from "@/sections/posts/slateview";
 import { Avatar } from "@mui/material";
+import SEOHead from "@/components/seo";
 
 type PostProps = {
   post: string;
@@ -69,9 +70,11 @@ const CommentContext = React.createContext<any>({});
 export const useCommentContext = () => React.useContext<any>(CommentContext);
 export type { CommentExtended };
 
+const URL = "https://prompters.dev";
 
-export default function Post({ post }: PostProps) {
-  const { id, title, content, skills, ais, tools, votesCount: propVoteCount, author } = SuperJSON.parse<any>(post);
+export default function Post({ post: postJSON }: PostProps) {
+  const post = SuperJSON.parse<any>(postJSON);
+  const { id, title, content, skills, ais, tools, votesCount: propVoteCount, author } = post;
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
   const [formOpen, setFormOpen] = useState<boolean>(false);
 
@@ -119,6 +122,7 @@ export default function Post({ post }: PostProps) {
 
   return (
     <Container>
+      <SEOHead {...post} image={'assets/background.png'} currentUrl={`${URL}/posts/${post.slug}`}/>
       <Navbar path="/posts" />
       <div className="flex flex-col items-center min-h-screen py-2">
         <div className="flex flex-col items-center justify-start w-full bg-white p-6 rounded-lg shadow-xl gap-4">
@@ -170,25 +174,19 @@ export default function Post({ post }: PostProps) {
 
             <div className="flex gap-2">
               <FacebookShareButton
-                url={`https://charichainstitute.com.np/blog/VMw8hIk37JPMQTEHiKai`}
+                url={`${URL}/posts/${post.slug}`}
                 quote={title}
-                hashtag="#AI"
+                hashtag={[tools?.map((tool: any) => "#"+tool.title), skills?.map((skill: any) => "#"+skill.title), ais?.map((ai: any) => "#"+ai.title)].join(" ")}
               >
                 <FacebookIcon size={32} round />
               </FacebookShareButton>
               <TwitterShareButton
-                url={`https://charichainstitute.com.np/blog/VMw8hIk37JPMQTEHiKai`}
+                url={`${URL}/posts/${post.slug}`}
                 title={title}
-                hashtags={["AI"]}
+                hashtags={[skills?.map((skill: any) => skill.title), ais?.map((ai: any) => ai.title), tools?.map((tool: any) => tool.title)]}
               >
                 <TwitterIcon size={32} round />
               </TwitterShareButton>
-              <InstapaperShareButton
-                url={`https://charichainstitute.com.np/blog/VMw8hIk37JPMQTEHiKai`}
-                title={title}
-              >
-                <InstapaperIcon size={32} round />
-              </InstapaperShareButton>
             </div>
           </div>
 

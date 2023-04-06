@@ -12,6 +12,10 @@ import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";
 import Head from "next/head";
 import theme from "@/config/theme";
+import dynamic from "next/dynamic";
+// const HelmetMetaData = dynamic(() => import('@/sections/helmetmetadata'), { ssr: false });
+import HelmetMetaData from "@/sections/helmetmetadata";
+import SEOHead from "@/components/seo";
 
 const clientSideEmotionCache = createEmotionCache();
 

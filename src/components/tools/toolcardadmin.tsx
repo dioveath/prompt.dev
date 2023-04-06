@@ -73,14 +73,8 @@ export default function ToolCardAdmin({ tool }: ToolCardAdminProps) {
           </div>
         </CardActionArea>
         <CardActions className="gap-4">
-          <Button size="small" startIcon={<MdShare />}>
-            {" "}
-            Share{" "}
-          </Button>
-          <Button size="small" startIcon={<MdPreview />} href={`/tools/${tool.id}`}>
-            {" "}
-            View{" "}
-          </Button>
+          <Button size="small" startIcon={<MdShare />}>Share</Button>
+          <Button size="small" startIcon={<MdPreview />} href={`/tools/${tool.id}`}>View</Button>
           <Button size="small" startIcon={tool.published ? <MdUnpublished/> : <MdPublish />} onClick={handlePublish}>
             {tool.published ? "Unpublish" : "Publish"}
           </Button>

@@ -14,6 +14,9 @@ import { toast } from "react-hot-toast";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import ClaimToolDialog from "@/sections/tools/claimtooldialog";
 import { useState } from "react";
+import SEOHead from "@/components/seo";
+import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } from "react-share";
+import Footer from "@/sections/footer";
 
 const meQuery = gql`
   query {
@@ -109,6 +112,8 @@ type ToolProps = {
   tool: string;
 };
 
+const URL = "https://www.prompters.dev";
+
 export default function ToolPage({ tool: toolJSON }: ToolProps) {
   const tool = SuperJSON.parse<ToolExtended>(toolJSON);
   const { id, title, website, avatar, shortDescription, description, toolAuthors } = tool;
@@ -137,6 +142,7 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
 
   return (
     <>
+      <SEOHead title={title} currentUrl={website} description={shortDescription || ""} image={avatar || "assets/artificial-intelligence.png"}/>
       <Navbar path="/tools" />
       <Container>
         <Grid container spacing={2}>
@@ -228,8 +234,22 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
             { !toolAuthors.length && user && <Button onClick={() => setClaimDialogOpen(true)} variant="contained">Claim Your Tool</Button> }
             <ClaimToolDialog open={claimDialogOpen} setOpen={setClaimDialogOpen} tool={tool}/>
           </div>
+
+          <div>
+            <FacebookShareButton url={`${URL}/tools/${id}`} quote={title} hashtag={`#${title}`}>
+              <FacebookIcon size={32} round />
+            </FacebookShareButton>
+            <TwitterShareButton url={`${URL}/tools/${id}`} title={title} hashtags={[`#${title}`]}>
+              <TwitterIcon size={32} round />
+            </TwitterShareButton>            
+          </div>
+
+          <div>
+            <Button href="/tools" variant="outlined"> Back to Tools </Button>
+          </div>
         </div>
       </Container>
+      <Footer/>
     </>
   );
 }
