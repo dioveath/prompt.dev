@@ -1,3 +1,5 @@
+import prisma from "../lib/prisma";
+
 import "./types/User";
 import "./types/Skill";
 import "./types/AI";

@@ -7,6 +7,7 @@ import ToolPanel from '@/sections/profile/toolspanel';
 import SettingsPanel from '@/sections/profile/settingspanel';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import SuperJSON from 'superjson';
 
 const meQuery = gql`
   query {
@@ -111,7 +112,6 @@ export const getServerSideProps = withPageAuthRequired({
     }
     return {
       props: {
-        user
       }
     }
   }

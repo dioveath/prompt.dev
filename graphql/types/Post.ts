@@ -1,5 +1,6 @@
 import slugify from "slugify";
 import { builder } from "../builder";
+import prisma from "../../lib/prisma";
 
 builder.prismaObject("Post", {
   fields: (t) => ({

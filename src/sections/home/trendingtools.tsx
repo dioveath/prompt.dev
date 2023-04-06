@@ -1,6 +1,5 @@
 import ToolCard from "@/components/tools/toolcard";
 import { ToolExtended } from "@/pages/tools";
-import Container from "@/ui/container";
 import { gql, useQuery } from "@apollo/client";
 import { Grid, Link, Skeleton, Typography } from "@mui/material";
 import React from "react";

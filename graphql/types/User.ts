@@ -1,6 +1,7 @@
 import { PrismaFieldResolver } from "@pothos/plugin-prisma";
 import PrismaTypes from "@pothos/plugin-prisma/generated";
 import { builder } from "../builder";
+import prisma from "../../lib/prisma";
 
 builder.prismaObject('User', {
     fields: (t) => ({

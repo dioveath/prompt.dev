@@ -183,9 +183,7 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
             <div className="text-lg font-semibold mt-2 mb-1"> Category </div>
             <div className="flex flex-wrap gap-4">
               <div className="flex gap-2">
-                {data?.tool.category?.map((category: any) => {
-                  return <Chip key={category.id} label={category.title} variant="outlined" color="primary" size="small" />;
-                })}
+                {data?.tool.category && <Chip key={data.tool.category.id} label={data.tool.category.title} variant="outlined" color="primary" size="small" />}
               </div>
             </div>
 
