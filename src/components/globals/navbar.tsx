@@ -90,14 +90,12 @@ function ResponsiveAppBar({ path }: NavbarProps) {
             component="a"
             href="/"
             sx={{
-              mr: 2,
+              mr: 6,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: "-0.05rem",
               color: "inherit",
               textDecoration: "none",
-              paddingRight: "4rem",
             }}
           >
             prompters.dev
@@ -105,7 +103,7 @@ function ResponsiveAppBar({ path }: NavbarProps) {
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
-              <MdLightMode/>
+              <MenuIcon/>
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -141,15 +139,14 @@ function ResponsiveAppBar({ path }: NavbarProps) {
             component="a"
             href=""
             sx={{
-              mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
+              fontWeight: "700",
               letterSpacing: "-0.05rem",
               color: "inherit",
               textDecoration: "none",
             }}
+            className="text-base md:text-md lg:text-lg"
           >
             prompters.dev
           </Typography>
