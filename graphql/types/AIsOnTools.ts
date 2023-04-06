@@ -5,9 +5,9 @@ builder.prismaObject("AIsOnTools", {
         id: t.exposeID("id"),
         aiId: t.exposeID("aiId"),
         toolId: t.exposeID("toolId"),
-        tool: t.relation("tool", { type: "Tool" }),
-        ai: t.relation("ai", { type: "AI" }),
-        createdAt: t.expose("createdAt", { type: "String" }),
-        updatedAt: t.expose("updatedAt", { type: "String" }),
+        tool: t.relation("tool", { type: "Tool" as any}),
+        ai: t.relation("ai", { type: "AI" as any}),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     }),
 });

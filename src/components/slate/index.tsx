@@ -26,14 +26,14 @@ export const Button = React.forwardRef(
   ) => (
     <span
       {...props}
-      ref={ref}
+      ref={ref && undefined}
       className={cx(
         className,
         css`
           cursor: pointer;
           color: ${reversed
             ? active
-              ? 'white'
+              ? `#635cfe`
               : '#aaa'
             : active
             ? 'black'
@@ -60,12 +60,12 @@ export const EditorValue = React.forwardRef(
     ref: Ref<OrNull<null>>
   ) => {
     const textLines = value.document.nodes
-      .map(node => node.text)
+      .map((node: any) => node.text)
       .toArray()
       .join('\n')
     return (
       <div
-        ref={ref}
+        ref={ref && undefined}
         {...props}
         className={cx(
           className,
@@ -83,7 +83,7 @@ export const EditorValue = React.forwardRef(
             background: #f8f8f8;
           `}
         >
-          Slate's value as text
+          Slate&apos;s value as text
         </div>
         <div
           className={css`
@@ -112,7 +112,7 @@ export const Icon = React.forwardRef(
   ) => (
     <span
       {...props}
-      ref={ref}
+      ref={ref && undefined}
       className={cx(
         'material-icons',
         className,
@@ -134,7 +134,7 @@ export const Instruction = React.forwardRef(
   ) => (
     <div
       {...props}
-      ref={ref}
+      ref={ref && undefined}
       className={cx(
         className,
         css`
@@ -159,7 +159,7 @@ export const Menu = React.forwardRef(
     <div
       {...props}
       data-test-id="menu"
-      ref={ref}
+      ref={ref && undefined}
       className={cx(
         className,
         css`
@@ -178,7 +178,7 @@ export const Menu = React.forwardRef(
 
 Menu.displayName = 'Menu';
 
-export const Portal = ({ children }) => {
+export const Portal = ({ children }: any) => {
   return typeof document === 'object'
     ? ReactDOM.createPortal(children, document.body)
     : null
@@ -191,7 +191,7 @@ export const Toolbar = React.forwardRef(
   ) => (
     <Menu
       {...props}
-      ref={ref}
+      ref={ref && undefined}
       className={cx(
         className,
         css`

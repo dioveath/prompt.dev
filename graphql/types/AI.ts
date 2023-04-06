@@ -8,10 +8,10 @@ builder.prismaObject('AI', {
         avatar: t.exposeString('avatar', { nullable: true }),
         company: t.exposeString('company', { nullable: true }),
         website: t.exposeString('website'),
-        posts: t.relation('posts', { type: 'Post' }),
-        category: t.relation('category', { type: 'AICategory' }),
-        createdAt: t.expose('createdAt', { type: 'String' }),
-        updatedAt: t.expose('updatedAt', { type: 'String' }),
+        posts: t.relation('posts', { type: 'Post' as any }),
+        category: t.relation('category', { type: 'AICategory' as any}),
+        createdAt: t.string({ resolve: (root) => root.createdAt.toISOString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.toISOString() }),
     }),
 });
 
@@ -38,8 +38,6 @@ builder.mutationField('createAI', (t) =>
             const { user } = await ctx;
             if (!user) throw new Error('Not authenticated');
 
-            console.log(args);
-
             const { title, description, company, website, categoryId } = args;
             const dbUser = await prisma.user.findUnique({
                 where: { email: user.email },
@@ -53,7 +51,7 @@ builder.mutationField('createAI', (t) =>
                     description,
                     company,
                     website,
-                    categoryId
+                    category: categoryId ? { connect: { id: categoryId.toString() } } : undefined,
                 },
             });
         }

@@ -4,9 +4,9 @@ builder.prismaObject('AICategory', {
     fields: (t) => ({
         id: t.exposeID('id'),
         title: t.exposeString('title'),
-        ais: t.relation('ais', { type: 'AI' }),
-        createdAt: t.expose('createdAt', { type: 'String' }),
-        updatedAt: t.expose('updatedAt', { type: 'String' }),
+        ais: t.relation('ais', { type: 'AI' as any }),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     }),
 });
 

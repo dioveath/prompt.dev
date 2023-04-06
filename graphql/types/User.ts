@@ -10,10 +10,10 @@ builder.prismaObject('User', {
         username: t.exposeString('username', { nullable: true }),
         avatar: t.exposeString('avatar', { nullable: true }),
         jobTitle: t.exposeString('jobTitle', { nullable: true }),
-        posts: t.relation('posts'),
-        authoredTools: t.relation('authoredTools'),
-        createdAt: t.expose('createdAt', { type: 'String' }),
-        updatedAt: t.expose('updatedAt', { type: 'String' }),
+        posts: t.relation('posts', { type: 'Post' as any }),
+        authoredTools: t.relation('authoredTools', { type: 'AuthorsOnTools' as any }),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     })
 });
 

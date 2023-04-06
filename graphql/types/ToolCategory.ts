@@ -4,9 +4,9 @@ builder.prismaObject('ToolCategory', {
     fields: (t) => ({
         id: t.exposeID('id'),
         title: t.exposeString('title'),
-        tools: t.relation('tools'),
-        createdAt: t.expose('createdAt', { type: 'String' }),
-        updatedAt: t.expose('updatedAt', { type: 'String' }),
+        tools: t.relation('tools', { type: 'Tool' as any }),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     })
 });
 

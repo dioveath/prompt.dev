@@ -71,18 +71,18 @@ export default function ToolsPage() {
     reset,
     formState: { errors },
   } = useForm<FilterProps>({ defaultValues: { search: "", category: "" } });
-  const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc", search: "", skills: [], published: true } });
+  const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc", search: "", skills: ["null"], published: true } });
   
   if (loading)
     return (
-      <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+      <Backdrop sx={{ backgroundColor: "#121212", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
         <CircularProgress color="inherit" />
       </Backdrop>
     );
 
   if (error)
     return (
-      <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+      <Backdrop sx={{ backgroundColor: "#121212", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
         <Typography variant="h4">500 Error: {error.message}</Typography>
       </Backdrop>
     );
@@ -90,7 +90,7 @@ export default function ToolsPage() {
   const { endCursor, hasNextPage } = data.tools.pageInfo;
 
   const onSubmit = async (data: FilterProps) => {
-    const skills = data.skills?.map((skill: Skill) => skill.id);
+    const skills: string[] | undefined = data.skills?.map((skill: Skill) => skill.id);
     await refetch({ search: data.search, orderBy: "createdAt", order: "desc", skills: skills });
   };
 

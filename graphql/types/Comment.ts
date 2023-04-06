@@ -4,12 +4,12 @@ builder.prismaObject("Comment", {
     fields: (t) => ({
         id: t.exposeID("id"),
         content: t.exposeString("content"),
-        post: t.relation("post", { type: "Post" }),        
-        author: t.relation("author", { type: "User" }),
-        votes: t.exposeInt("votes"),
-        replies: t.relation("replies", { type: "Comment" }),
-        createdAt: t.expose("createdAt", { type: "String" }),
-        updatedAt: t.expose("updatedAt", { type: "String" }),
+        post: t.relation("post", { type: "Post" as any }),        
+        author: t.relation("author", { type: "User" as any}),
+        votes: t.relation("votes", { type: "VotesOnComments" as any }),
+        replies: t.relation("replies", { type: "Comment" as any }),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     }),
 });
 
@@ -56,7 +56,7 @@ builder.mutationField("createComment", (t) =>
                 data: {
                     content,
                     authorId: dbUser.id,
-                    postId: postId?.toString() || undefined,
+                    postId: postId?.toString(),
                     parentId: parentId?.toString() || undefined,
                 }
             });

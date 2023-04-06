@@ -9,13 +9,14 @@ export const builder = new SchemaBuilder<{
     PrismaTypes: PrismaTypes;
     Context: ReturnType<typeof createContext>;
     Scalars: {
-        DateTime: { 
+        DateTime: {
             Input: Date;
             Output: Date;
         };
     };
  }>({
     plugins: [PrismaPlugin, RelayPlugin],
+    // @ts-ignore
     relayOptions: {},
     prisma: { client: prisma }
 });
@@ -31,11 +32,14 @@ builder.queryType({
                 const { user } = await ctx;
                 if(!user) throw new Error("Not authenticated");
 
-                return await prisma.user.findUnique({
+                const dbUser = await prisma.user.findUnique({
                     where: {
                         email: user.email
                     }
                 });
+                if(!dbUser) throw new Error("User not found");
+
+                return dbUser;
             }
         }),
     })

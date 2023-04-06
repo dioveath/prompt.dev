@@ -5,9 +5,9 @@ builder.prismaObject('AIsOnPosts', {
         id: t.exposeID('id'),
         aiId: t.exposeID('aiId'),
         postId: t.exposeID('postId'),
-        post: t.relation('post', { type: 'Post' }),
-        ai: t.relation('ai', { type: 'AI' }),
-        createdAt: t.expose('createdAt', { type: 'String' }),
-        updatedAt: t.expose('updatedAt', { type: 'String' }),
+        post: t.relation('post', { type: 'Post' as any }),
+        ai: t.relation('ai', { type: 'AI' as any}),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     }),
 });

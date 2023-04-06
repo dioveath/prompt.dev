@@ -6,9 +6,18 @@ builder.prismaObject("Post", {
     id: t.exposeID("id"),
     title: t.exposeString("title"),
     content: t.exposeString("content", { nullable: true }),
-    author: t.relation("author", { type: "User" }),
-    votes: t.relation("votes", { type: "VotesOnPosts" }),
-    votesCount: t.relationCount("votes"),
+    author: t.relation("author", { type: "User" as any}),
+    votes: t.relation("votes", { type: "VotesOnPosts" as any}),
+    votesCount: t.relationCount("votes", {
+      resolve: async (parent, _args, ctx, _info) => {
+        const votes = await prisma.votesOnPosts.findMany({
+          where: {
+            postId: parent.id,
+          },
+        });
+        return votes.length;
+      }
+    }),
     meVoted: t.boolean({
       select: {
         votes: true,
@@ -29,18 +38,19 @@ builder.prismaObject("Post", {
         return votes.length > 0;
       },
     }),
-    slug: t.exposeString("slug"),
+    slug: t.exposeString("slug", { nullable: true }),
     published: t.exposeBoolean("published"),
-    skills: t.relation("skills", { type: "SkillsOnPosts" }),
-    ais: t.relation("ais", { type: "AIsOnPosts" }),
-    tools: t.relation("tools", { type: "ToolsOnPosts" }),
-    comments: t.relation("comments", { type: "Comment" }),
-    createdAt: t.expose("createdAt", { type: "String" }),
-    updatedAt: t.expose("updatedAt", { type: "String" }),
+    skills: t.relation("skills", { type: "SkillsOnPosts" as any}),
+    ais: t.relation("ais", { type: "AIsOnPosts" as any}),
+    tools: t.relation("tools", { type: "ToolsOnPosts" as any}),
+    comments: t.relation("comments", { type: "Comment" as any}),
+    createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+    updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
   }),
 });
 
 builder.queryField("posts", (t) =>
+  //@ts-ignore
   t.prismaConnection({
     type: "Post",
     cursor: "id",
@@ -79,6 +89,9 @@ builder.queryField("post", (t) =>
           },
         },
       });
+
+      if (!post) throw new Error("Post not found");
+
       return post;
     },
   })
@@ -92,9 +105,9 @@ builder.mutationField("createPost", (t) =>
       content: t.arg.string({ required: true }),
       published: t.arg.boolean({ defaultValue: false, required: true }),
       slug: t.arg.string({ required: false }),
-      skills: t.arg.idList(),
-      ais: t.arg.idList(),
-      tools: t.arg.idList(),
+      skills: t.arg.idList({ required: false }),
+      ais: t.arg.idList({ required: false }),
+      tools: t.arg.idList({ required: false }),
     },
     resolve: async (_query, _parent, args, ctx, _info) => {
       const { user } = await ctx;
@@ -154,13 +167,13 @@ builder.mutationField("updatePost", (t) =>
     type: "Post",
     args: {
       id: t.arg.id({ required: true }),
-      title: t.arg.string(),
-      content: t.arg.string(),
-      published: t.arg.boolean(),
-      skills: t.arg.idList(),
-      ais: t.arg.idList(),
-      slug: t.arg.string(),
-      tools: t.arg.idList(),
+      title: t.arg.string({ required: false }),
+      content: t.arg.string({ required: false }),
+      published: t.arg.boolean( { required: false }),
+      skills: t.arg.idList({ required: false }),
+      ais: t.arg.idList({ required: false}),
+      slug: t.arg.string({ required: false }),
+      tools: t.arg.idList({ required: false }),
     },
     resolve: async (_query, _parent, args, ctx, _info) => {
       const { user } = await ctx;

@@ -61,7 +61,7 @@ const SlateEditor = ({ initialValue} : { initialValue?: string | null}) => {
         <BlockButton format="justify" icon="format_align_justify" />
       </Toolbar>
       <Editable
-        className='bg-[#e1e1e1] h-[400px] overflow-y-scroll p-4'
+        className='h-[400px] overflow-y-scroll p-4'
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"
@@ -152,6 +152,7 @@ const BlockButton = ({ format, icon }) => {
   const editor = useSlate()
   return (
     <Button
+      reversed={true}
       active={isBlockActive(
         editor,
         format,
@@ -171,6 +172,7 @@ const MarkButton = ({ format, icon }) => {
   const editor = useSlate()
   return (
     <Button
+      reversed={true}
       active={isMarkActive(editor, format)}
       onMouseDown={event => {
         event.preventDefault()

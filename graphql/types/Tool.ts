@@ -8,12 +8,12 @@ builder.prismaObject("Tool", {
         description: t.exposeString("description", { nullable: true }),
         avatar: t.exposeString("avatar", { nullable: true }),
         website: t.exposeString("website"),
-        category: t.expose("category", { type: "ToolCategory", nullable: true }),
-        reviews: t.relation("reviews"),
-        skills: t.relation("skills"),
-        ais: t.relation("ais"),
-        toolAuthors: t.relation("toolAuthors", { type: "AuthorsOnTools" }),
-        toolUsers: t.relation("toolUsers", { type: "UsersOnTools" }),
+        category: t.relation("category", { type: "ToolCategory" as any, nullable: true }),
+        reviews: t.relation("reviews", { type: "ReviewsOnTools" as any }),
+        skills: t.relation("skills", { type: "SkillsOnTools" as any }),
+        ais: t.relation("ais", { type: "AIsOnTools" as any }),
+        toolAuthors: t.relation("toolAuthors", { type: "AuthorsOnTools" as any }),
+        toolUsers: t.relation("toolUsers", { type: "UsersOnTools" as any }),
         meUses: t.boolean({
             select: {
                 toolUsers: true
@@ -36,13 +36,15 @@ builder.prismaObject("Tool", {
         }),
         views: t.exposeInt("views"),
         published: t.exposeBoolean("published"),
-        lastReleased: t.expose("lastReleased", { type: "String", nullable: true }),
-        createdAt: t.expose("createdAt", { type: "String" }),
-        updatedAt: t.expose("updatedAt", { type: "String" }),
+
+        lastReleased: t.string({ resolve: (root) => root.lastReleased?.getTime().toString(), nullable: true }),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     })
 });
 
 builder.queryField("tools", (t) =>
+    //@ts-ignore
     t.prismaConnection({
         type: "Tool",
         cursor: "id",
@@ -79,12 +81,13 @@ builder.queryField("tools", (t) =>
             }
 
             if (skills && skills.length > 0) {
-                console.log(skills);
-                query.where = {
-                    ...query.where,
-                    skills: { 
-                        some: { skillId: { in: skills }} 
-                    } 
+                if(!(skills.length === 1 && skills[0] === "null")) {
+                    query.where = {
+                        ...query.where,
+                        skills: { 
+                            some: { skillId: { in: skills }} 
+                        } 
+                    }
                 }
             }
 

@@ -79,7 +79,7 @@ export default function ExploreToolsSection() {
 
   if (error)
     return (
-      <Backdrop sx={{ backgroundColor: "#efefef", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+      <Backdrop sx={{ backgroundColor: "#121212", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
         <Typography variant="h4">500 Error: {error.message}</Typography>
       </Backdrop>
     );

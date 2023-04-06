@@ -5,9 +5,9 @@ builder.prismaObject('SkillsOnPosts', {
         id: t.exposeID('id'),
         skillId: t.exposeID('skillId'),
         postId: t.exposeID('postId'),
-        post: t.relation('post', { type: 'Post' }),
-        skill: t.relation('skill', { type: 'Skill' }),
-        createdAt: t.expose('createdAt', { type: 'String' }),
-        updatedAt: t.expose('updatedAt', { type: 'String' }),
+        post: t.relation('post', { type: 'Post' as any}),
+        skill: t.relation('skill', { type: 'Skill' as any}),
+        createdAt: t.string({ resolve: (root) => root.createdAt.getTime().toString() }),
+        updatedAt: t.string({ resolve: (root) => root.updatedAt.getTime().toString() }),
     }),
 });
