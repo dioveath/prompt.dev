@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import Button from '@mui/material/Button';
 import { gql, useMutation } from '@apollo/client';
-import { useRefresh } from '@/hooks/useRefresh';
-import { CommentExtended, useCommentContext } from '@/pages/posts/[id]';
 import apolloClient from '../../../lib/apollo';
-import { TextField, TextareaAutosize } from '@mui/material';
+import { TextField } from '@mui/material';
+import { toast } from 'react-hot-toast';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 type AddCommentProps = {
     comment: { postId: string, id?: string }
@@ -33,9 +33,11 @@ const addCommentMutation = gql`
 export default function AddComment({ comment, setFormOpen }: AddCommentProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [addComment, { data, loading, error }] = useMutation(addCommentMutation);
-    
+    const { user, isLoading: userLoading, error: userError } = useUser();
+
     const onAddComment = async (content: string) => {
-        if(!content) return;
+        if(!user) return toast.error("You must be logged in to comment");
+        if(!content) return toast.error("You must enter a comment");
 
         try {
             const addedComment = await addComment({ variables: { content: content, postId: comment.postId, parentId: comment.id } });

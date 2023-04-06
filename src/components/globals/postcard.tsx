@@ -7,6 +7,7 @@ import { SlBadge } from "react-icons/sl";
 import { GiRobotHelmet } from "react-icons/gi";
 import { BsTools } from "react-icons/bs";
 import { Card, Container, Typography, Chip } from "@mui/material";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 
 
@@ -35,6 +36,7 @@ type PostCardProps = {
 export default function PostCard(props: PostCardProps) {
   const { id, title, content, votesCount, meVoted, skills, ais, tools } = props;
   const [updatePost, { data, loading, error }] = useMutation(updateVoteMutation);
+  const { user, isLoading: userLoading, error: userError } = useUser();
 
   const summary = useMemo(() => {
     const parsedContent = JSON.parse(content);
@@ -48,6 +50,7 @@ export default function PostCard(props: PostCardProps) {
   }, [content]);
 
    const onVote = () => {
+    if(!user) return toast.error("Please login to vote");
     try {
       toast.promise(updatePost({ variables: { id: id } }), {
         loading: "Updating Votes 🔃🔃",
