@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import Link from "next/link";
 
 import Navbar from "@/components/globals/navbar";
-import { Avatar, Button, CardMedia, Chip, Container, Grid } from "@mui/material";
+import { Avatar, Button, CardMedia, Chip, Container, Grid, Skeleton } from "@mui/material";
 import { VscLinkExternal } from "react-icons/vsc";
 
 import SuperJSON from "superjson";
@@ -123,8 +123,24 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
 
   const [claimDialogOpen, setClaimDialogOpen] = useState(false);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if(loading) {
+    return (
+      <>
+        <SEOHead title={title} currentUrl={website} description={shortDescription || ""} image={avatar || "assets/artificial-intelligence.png"}/>      
+        <Navbar path="/tools" />
+        <Container>
+          <Grid container spacing={2}>
+            <Grid item sm={12} md={6}>
+              <Skeleton variant="text" animation="wave" height={500} width="100%" />
+            </Grid>
+            <Grid item sm={12} md={6}>
+              <Skeleton variant="text" animation="wave" height={500} width="100%" />
+            </Grid>
+          </Grid>
+        </Container>
+      </>
+    );
+  }              
 
   const { meUses, toolUsers } = data.tool;
 
@@ -167,7 +183,7 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
             <div className="text-lg font-semibold mt-2 mb-1"> Category </div>
             <div className="flex flex-wrap gap-4">
               <div className="flex gap-2">
-                {data.tool.category?.map((category: any) => {
+                {data?.tool.category?.map((category: any) => {
                   return <Chip key={category.id} label={category.title} variant="outlined" color="primary" size="small" />;
                 })}
               </div>
@@ -176,7 +192,7 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
             <div className="text-lg font-semibold mt-2 mb-1"> AIs </div>
             <div className="flex flex-wrap gap-4">
               <div className="flex gap-2">
-                {data.tool.ais?.map((aisOnTools: any) => {
+                {data?.tool.ais?.map((aisOnTools: any) => {
                   const ai = aisOnTools.ai;
                   return <Chip key={ai.id} label={ai.title} variant="outlined" color="primary" size="small" />;
                 })}
@@ -186,7 +202,7 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
             <div className="text-lg font-semibold mt-2 mb-1"> Skills </div>
             <div className="flex flex-wrap gap-4">
               <div className="flex gap-2">
-                {data.tool.skills?.map((skillsOnTools: any) => {
+                {data?.tool.skills?.map((skillsOnTools: any) => {
                   const skill = skillsOnTools.skill;
                   return <Chip key={skill.id} label={skill.title} variant="outlined" color="primary" size="small" />;
                 })}
@@ -218,6 +234,7 @@ export default function ToolPage({ tool: toolJSON }: ToolProps) {
                     </div>
                   );
                 })}
+                { loading && <Skeleton variant="rounded"/> }
               </div>
             </div>
           </Grid>

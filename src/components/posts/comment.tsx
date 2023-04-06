@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import AddComment from "./add_comment";
 import { CommentExtended, useCommentContext } from "@/pages/posts/[id]";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, Typography } from "@mui/material";
 import toast from "react-hot-toast";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
@@ -24,12 +24,12 @@ export default function CommentCard({ comment }: CommentCardProps) {
           <Avatar alt={`${comment?.author?.name} Profile`} src={comment?.author?.avatar} />
           <div>
             <h1 className="text-sm text-gray-500">{comment?.author?.name}</h1>
-            <p className="text-black">{comment?.content}</p>
+            <Typography variant="body2">{comment?.content}</Typography>
           </div>
         </div>
         <div className="max-w-md flex justify-between items-center gap-4 text-xs">
-          <div> upvote </div>
-          <div> downvote </div>
+          {/* <div> upvote </div> */}
+          {/* <div> downvote </div> */}
           <div className="flex flex-row gap-2">
             <Button
               onClick={() => {

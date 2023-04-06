@@ -11,11 +11,10 @@ import { Toaster } from "react-hot-toast";
 
 import "@/styles/globals.css";
 import Head from "next/head";
-import theme from "@/config/theme";
-import dynamic from "next/dynamic";
-// const HelmetMetaData = dynamic(() => import('@/sections/helmetmetadata'), { ssr: false });
-import HelmetMetaData from "@/sections/helmetmetadata";
-import SEOHead from "@/components/seo";
+import { useMemo, useState } from "react";
+import { createTheme } from "@mui/material";
+import { createContext } from "react";
+import getDesignTokens from "@/config/theme";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -23,23 +22,41 @@ export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
 
+export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const [mode, setMode] = useState<"light" | "dark">("dark");
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+      },
+    }),
+    []
+  );
+
+  const appliedTheme = useMemo(
+    () => createTheme(getDesignTokens(mode)),
+    [mode]
+  );
+
   return (
     <UserProvider>
       <ApolloProvider client={apolloClient}>
         <CacheProvider value={emotionCache}>
           <Head>
-            <meta
-              name="viewport"
-              content="initial-scale=1, width=device-width"
-            />
+            <meta name="viewport" content="initial-scale=1, width=device-width" />
           </Head>
-          <ThemeProvider theme={theme}>
+          
+          <ColorModeContext.Provider value={colorMode}>
+          <ThemeProvider theme={appliedTheme}>
             <Toaster />
             <CssBaseline />
             <Component {...pageProps} />
           </ThemeProvider>
+          </ColorModeContext.Provider>
+          
         </CacheProvider>
       </ApolloProvider>
     </UserProvider>

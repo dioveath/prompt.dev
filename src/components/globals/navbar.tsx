@@ -12,7 +12,9 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { gql, useQuery } from "@apollo/client";
-import { Link, Skeleton } from "@mui/material";
+import { Link, Skeleton, useTheme } from "@mui/material";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
+import { ColorModeContext } from "@/pages/_app";
 
 const pages = [
   { label: "Home", href: "/" },
@@ -59,6 +61,9 @@ function ResponsiveAppBar({ path }: NavbarProps) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const { data, loading, error } = useQuery(meQuery);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+  const { toggleColorMode } = React.useContext(ColorModeContext);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -100,7 +105,7 @@ function ResponsiveAppBar({ path }: NavbarProps) {
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
-              <MenuIcon />
+              <MdLightMode/>
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -170,6 +175,9 @@ function ResponsiveAppBar({ path }: NavbarProps) {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            {/* <IconButton onClick={toggleColorMode} sx={{marginRight: "20px"}}> 
+            { isDark ? <MdLightMode /> : <MdDarkMode />}
+            </IconButton> */}
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {loading && <Skeleton animation="wave" variant="circular" width={40} height={40} />}

@@ -16,7 +16,7 @@ import { Comment } from "@prisma/client";
 import AddComment from "@/components/posts/add_comment";
 
 import SlateView from "@/sections/posts/slateview";
-import { Avatar } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import SEOHead from "@/components/seo";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
@@ -128,9 +128,9 @@ export default function Post({ post: postJSON }: PostProps) {
       <SEOHead {...post} image={"assets/background.png"} currentUrl={`${URL}/posts/${post.slug}`} />
       <Navbar path="/posts" />
       <div className="flex flex-col items-center min-h-screen py-2">
-        <div className="flex flex-col items-center justify-start w-full bg-white p-6 rounded-lg shadow-xl gap-4">
+        <Box className="flex flex-col items-center justify-start w-full px-6 md:px-10 lg:px-20 py-8 lg:py-16 rounded-lg shadow-xl gap-4">
           <div className="w-full flex items-center justify-start gap-2">
-            <Avatar alt={`${author?.name} Profile`} src={author?.avatar} className="w-16 h-16" />
+            <Avatar alt={`${author?.name} Profile`} src={author?.avatar}/>
             <div>
               <h1 className="text-2xl font-bold">{title}</h1>
               <article className="text-sm text-gray-500">{author?.name}</article>
@@ -167,7 +167,7 @@ export default function Post({ post: postJSON }: PostProps) {
           <div className="w-full flex justify-between items-center gap-4">
             <div onClick={onVote} className="flex flex-row items-center gap-2 cursor-pointer">
               {meVoted ? <TbArrowBigUpLinesFilled className="text-2xl text-green-500" /> : <TbArrowBigUpLines className="text-2xl hover:text-green-500" />}
-              <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
+              <Typography variant="body2">{votesCount}</Typography>
             </div>
             <div>
               <Button
@@ -210,7 +210,7 @@ export default function Post({ post: postJSON }: PostProps) {
               </CommentContext.Provider>
             </div>
           </div>
-        </div>
+        </Box>
       </div>
       <Footer />
     </Container>

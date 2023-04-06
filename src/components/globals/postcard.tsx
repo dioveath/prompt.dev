@@ -6,7 +6,7 @@ import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
 import { SlBadge } from "react-icons/sl";
 import { GiRobotHelmet } from "react-icons/gi";
 import { BsTools } from "react-icons/bs";
-import { Card, Container, Typography, Chip } from "@mui/material";
+import { Card, Container, Typography, Chip, Box } from "@mui/material";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 
@@ -64,17 +64,17 @@ export default function PostCard(props: PostCardProps) {
 
   return (
       <div className="w-full flex justify-between cursor-pointer shadow-lg rounded-lg overflow-clip">
-        <div className="flex flex-col items-center bg-gray-200 py-4 px-6">
+        <Box className="flex flex-col items-center py-4 px-6">
           <div onClick={onVote} className="flex flex-col items-center gap-1">
           { meVoted ? 
           <TbArrowBigUpLinesFilled className="text-2xl text-green-500"/>
           : <TbArrowBigUpLines className="text-2xl hover:text-green-500"/> }
-          <p className={"text-sm font-bold " + (meVoted ? "text-green-500" : "text-black")}> {votesCount} </p>
+          <Typography variant="body2"> { votesCount } </Typography>
           </div>
-        </div>
-        <Link href={`posts/${id}`} className="flex-1 py-2 px-4 no-underline">
-          <Typography variant="h6" className="font-semibold mb-1 text-black"> {title} </Typography>
-          <Typography variant="body2" className="text-black"> {summary} </Typography>
+        </Box>
+        <Link href={`posts/${id}`} className="flex-1 py-2 px-4 no-underline text-inherit">
+          <Typography variant="h6" className="font-semibold mb-1"> {title} </Typography>
+          <Typography variant="body2" className=""> {summary} </Typography>
           <div className="flex gap-4">
             <div>
               <Typography variant="body2" className="font-semibold mb-1"> Tools </Typography>
