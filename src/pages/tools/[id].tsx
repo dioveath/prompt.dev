@@ -1,3 +1,4 @@
+import prisma from "../../../lib/prisma";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
@@ -8,7 +9,6 @@ import { VscLinkExternal } from "react-icons/vsc";
 
 import SuperJSON from "superjson";
 import { ToolExtended } from ".";
-import Image from "next/image";
 import { isValidID } from "@/helpers/isValidID";
 import { toast } from "react-hot-toast";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -17,6 +17,7 @@ import { useState } from "react";
 import SEOHead from "@/components/seo";
 import { FacebookIcon, FacebookShareButton, TwitterIcon, TwitterShareButton } from "react-share";
 import Footer from "@/sections/footer";
+
 
 const meQuery = gql`
   query {

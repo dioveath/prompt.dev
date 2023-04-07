@@ -2,6 +2,7 @@ import React from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import toast from "react-hot-toast";
 import { gql } from "@apollo/client";
+import prisma from "../../../../lib/prisma";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Container, Button, Grid } from "@mui/material";

@@ -1,6 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import prisma from "../../../../lib/prisma";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import toast from "react-hot-toast";
 import Navbar from "@/components/globals/navbar";

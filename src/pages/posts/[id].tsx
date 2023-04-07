@@ -4,6 +4,7 @@ import { GetServerSideProps } from "next";
 import React, { useEffect, useMemo, useState } from "react";
 import SuperJSON from "superjson";
 import Footer from "@/sections/footer";
+import prisma from "../../../lib/prisma";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import toast from "react-hot-toast";
 import { TbArrowBigUpLines, TbArrowBigUpLinesFilled } from "react-icons/tb";
