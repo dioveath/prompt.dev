@@ -47,6 +47,13 @@ export default function App(props: MyAppProps) {
         <CacheProvider value={emotionCache}>
           <Head>
             <meta name="viewport" content="initial-scale=1, width=device-width" />
+            <link rel="manifest" href="site.webmanifest" />
+            <link rel="apple-touch-icon" href="icon.png" />
+            <link rel="icon" href="favicon.ico" />
+            <meta name="description" content="A community for developers to share their ai tools, learn new skills, and connect with other fellows." />
+            <meta name="keywords" content="ai, tools, developer, advert, showcase, community, projects, skills, connect, learn, share" />
+            <meta name="author" content="Saroj Rai" />
+            <title> prompters.dev </title>
           </Head>
           
           <ColorModeContext.Provider value={colorMode}>
