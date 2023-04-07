@@ -22,7 +22,7 @@ export default function PostPanel({ posts, index, value }: PostPanelProps) {
   return (
     <TabPanel index={index} value={value}>
       <Grid container className="py-4" spacing={4}>
-        <Grid item container xs={8}>
+        <Grid item container xs={12} md={8}>
           <Container className="flex flex-col gap-2">
             {posts.map((post: any) => (
               <Card key={post.id} className="shadow-none">
@@ -49,7 +49,7 @@ export default function PostPanel({ posts, index, value }: PostPanelProps) {
             ))}
           </Container>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={4}>
           <Link href="/posts/create">
             <Button variant="contained"> Create new Post </Button>
           </Link>

@@ -61,7 +61,7 @@ export default function SettingsPanel({ userData, index, value }: SettingsPanelP
   return (
     <TabPanel index={index} value={value}>
       <Grid container className="py-4" spacing={4}>
-        <Grid item container xs={8}>
+        <Grid item container xs={12} md={8}>
           <Container>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
               <TextField {...register("name", { required: true, maxLength: 32 }) } label="Name" variant="filled" defaultValue={userData.name} multiline maxRows={1} 
@@ -77,8 +77,7 @@ export default function SettingsPanel({ userData, index, value }: SettingsPanelP
             </form>
           </Container>
         </Grid>
-        <Grid item xs={4}>
-            
+        <Grid item xs={12} md={4}>
         </Grid>
       </Grid>
     </TabPanel>

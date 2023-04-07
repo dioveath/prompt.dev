@@ -12,6 +12,7 @@ import SuperJSON from "superjson";
 import { AI, Post, Skill, SkillsOnPosts, Tool } from "@prisma/client";
 import Navbar from "@/components/globals/navbar";
 import { TextField } from "@mui/material";
+import PSelect from "@/components/globals/select";
 
 const Select = dynamic(import("react-select"), { ssr: false });
 const SlateEditor = dynamic(import("@/sections/posts/slateeditor"), {
@@ -139,7 +140,7 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
           name="skills"
           control={control}
           render={({ field }) => (
-            <Select
+            <PSelect
               {...field}
               options={skillsData?.skills}
               isMulti={true}
@@ -155,7 +156,7 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
           name="ais"
           control={control}
           render={({ field }) => (
-            <Select
+            <PSelect
               {...field}
               options={aiData?.ais}
               isMulti={true}
@@ -171,7 +172,7 @@ export default function CreatePost({ post: postJSON }: UpdatePostProps) {
             name="tools"
             control={control}
             render={({ field }) => (
-                <Select
+                <PSelect
                     {...field}
                     options={toolsData?.tools}
                     isMulti={true}

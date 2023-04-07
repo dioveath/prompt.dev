@@ -9,6 +9,7 @@ import { Container, Button } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Navbar from '@/components/globals/navbar';
 import { TextField } from '@mui/material';
+import PSelect from '@/components/globals/select';
 
 const Select = dynamic(import('react-select'), { ssr: false });
 const SlateEditor = dynamic(import('@/sections/posts/slateeditor'), { ssr: false });
@@ -119,7 +120,7 @@ export default function CreatePost({ post } : UpdatePostProps) {
                 name="skills"
                 control={control}
                 render={({ field }) => (
-                    <Select
+                    <PSelect
                         {...field}
                         options={skillsData?.skills}
                         isMulti={true}
@@ -134,7 +135,7 @@ export default function CreatePost({ post } : UpdatePostProps) {
                 name="ais"
                 control={control}
                 render={({ field }) => (
-                    <Select
+                    <PSelect
                         {...field}
                         options={aiData?.ais}
                         isMulti={true}
@@ -149,7 +150,7 @@ export default function CreatePost({ post } : UpdatePostProps) {
                 name="tools"
                 control={control}
                 render={({ field }) => (
-                    <Select
+                    <PSelect
                         {...field}
                         options={toolData?.tools}
                         isMulti={true}

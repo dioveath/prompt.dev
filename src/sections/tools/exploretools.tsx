@@ -7,7 +7,7 @@ import React from "react";
 
 import { Backdrop, Button, CircularProgress, Container, Grid, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-const Select = dynamic(import("react-select"), { ssr: false });
+import PSelect from "@/components/globals/select";
 
 const toolsQuery = gql`
   query ($first: Int, $after: ID, $orderBy: String, $order: String, $search: String, $skills: [ID!], $published: Boolean) {
@@ -60,7 +60,7 @@ interface FilterProps {
 }
 
 export default function ExploreToolsSection() {
-  const { data: skillsData, error: skillsError } = useQuery(getSkillsQuery);  
+  const { data: skillsData, error: skillsError } = useQuery(getSkillsQuery);
   const {
     control,
     register,
@@ -69,7 +69,7 @@ export default function ExploreToolsSection() {
     formState: { errors },
   } = useForm<FilterProps>({ defaultValues: { search: "", category: "" } });
   const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "createdAt", order: "desc", search: "", skills: [], published: true } });
-  
+
   if (loading)
     return (
       <Grid container className="justify-center items-center">
@@ -124,7 +124,7 @@ export default function ExploreToolsSection() {
           </Typography>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="">
-        <Grid container spacing={2} className="my-4 items-end">
+          <Grid container spacing={2} className="my-4 items-end">
             <Grid item xs={12} sm={6} md={6} lg={6}>
               <TextField
                 {...register("search", { required: false })}
@@ -140,7 +140,7 @@ export default function ExploreToolsSection() {
                 name="skills"
                 control={control}
                 render={({ field }) => (
-                  <Select
+                  <PSelect
                     {...field}
                     options={skillsData?.skills}
                     isMulti={true}
@@ -153,13 +153,11 @@ export default function ExploreToolsSection() {
             </Grid>
             <Grid item xs={12} sm={12} md={3} lg={3}>
               <Button variant="contained" color="primary" fullWidth size="large" type="submit">
-                {" "}
-                Search{" "}
+                Search
               </Button>
             </Grid>
-          
-        </Grid>
-        </form>        
+          </Grid>
+        </form>
 
         <Grid container rowSpacing={2} columnSpacing={1} className="my-10">
           {data.tools.edges.length === 0 && (

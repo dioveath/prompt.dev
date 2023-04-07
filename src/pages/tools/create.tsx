@@ -10,6 +10,7 @@ import Footer from "@/sections/footer";
 import { ToolCategory } from "@prisma/client";
 import { useRouter } from "next/router";
 import CongratsDialog from "@/sections/tools/congratsdialog";
+import PSelect from "@/components/globals/select";
 
 const createAICategoryQuery = gql`
   mutation CreateTool($title: String!, $description: String, $shortDescription: String, $avatar: String, $website: String!, $categoryId: ID, $ais: [ID!], $skills: [ID!]) {
@@ -134,7 +135,7 @@ export default function CreateAIPage() {
                     name="ais"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <PSelect
                         {...field}
                         options={aisData?.ais}
                         isMulti={true}
@@ -151,7 +152,7 @@ export default function CreateAIPage() {
                     name="skills"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <PSelect
                         {...field}
                         options={skillsData?.skills}
                         isMulti={true}
@@ -168,7 +169,7 @@ export default function CreateAIPage() {
                     name="category"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <PSelect
                         {...field}
                         options={toolCategoryData?.toolCategories}
                         isMulti={false}

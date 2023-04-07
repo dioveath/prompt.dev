@@ -9,6 +9,7 @@ import Navbar from "@/components/globals/navbar";
 import { Backdrop, Button, CircularProgress, Container, Grid, TextField, Typography } from "@mui/material";
 import Footer from "@/sections/footer";
 import { Controller, useForm } from "react-hook-form";
+import PSelect from "@/components/globals/select";
 const Select = dynamic(import("react-select"), { ssr: false });
 
 const toolsQuery = gql`
@@ -144,7 +145,7 @@ export default function ToolsPage() {
                 name="skills"
                 control={control}
                 render={({ field }) => (
-                  <Select
+                  <PSelect
                     {...field}
                     options={skillsData?.skills}
                     isMulti={true}

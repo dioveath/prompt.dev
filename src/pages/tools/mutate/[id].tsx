@@ -11,6 +11,7 @@ import Footer from "@/sections/footer";
 import SuperJSON from "superjson";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { AI, Skill, Tool, ToolCategory, User } from "@prisma/client";
+import PSelect from "@/components/globals/select";
 
 const updateToolMutation = gql`
   mutation UpdateTool(
@@ -151,7 +152,7 @@ export default function MutateToolPage({ tool: toolJSON }: MutateToolPageProps) 
                     name="ais"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <PSelect
                         {...field}
                         options={aisData?.ais}
                         isMulti={true}
@@ -169,7 +170,7 @@ export default function MutateToolPage({ tool: toolJSON }: MutateToolPageProps) 
                     name="skills"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <PSelect
                         {...field}
                         options={skillsData?.skills}
                         isMulti={true}
@@ -187,7 +188,7 @@ export default function MutateToolPage({ tool: toolJSON }: MutateToolPageProps) 
                     name="category"
                     control={control}
                     render={({ field }) => (
-                      <Select
+                      <PSelect
                         {...field}
                         options={toolCategoryData?.toolCategories}
                         getOptionLabel={(option: any) => option.title}
