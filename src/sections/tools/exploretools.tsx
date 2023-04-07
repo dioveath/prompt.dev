@@ -5,7 +5,7 @@ import { Skill, Tool, User } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 
-import { Backdrop, Button, CircularProgress, Container, Grid, TextField, Typography } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Container, Grid, Skeleton, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import PSelect from "@/components/globals/select";
 
@@ -70,12 +70,12 @@ export default function ExploreToolsSection() {
   } = useForm<FilterProps>({ defaultValues: { search: "", category: "" } });
   const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "createdAt", order: "desc", search: "", skills: [], published: true } });
 
-  if (loading)
-    return (
-      <Grid container className="justify-center items-center">
-        <CircularProgress color="inherit" />
-      </Grid>
-    );
+  // if (loading)
+  //   return (
+  //     <Grid container className="justify-center items-center">
+  //       <CircularProgress color="inherit" />
+  //     </Grid>
+  //   );
 
   if (error)
     return (
@@ -84,7 +84,7 @@ export default function ExploreToolsSection() {
       </Backdrop>
     );
 
-  const { endCursor, hasNextPage } = data.tools.pageInfo;
+  const { endCursor, hasNextPage } = data && data.tools.pageInfo || {endCursor: null, hasNextPage: false }; 
 
   const onSubmit = async (data: FilterProps) => {
     const skills = data.skills?.map((skill: Skill) => skill.id);
@@ -159,20 +159,31 @@ export default function ExploreToolsSection() {
           </Grid>
         </form>
 
-        <Grid container rowSpacing={2} columnSpacing={1} className="my-10">
-          {data.tools.edges.length === 0 && (
+        <Grid container rowSpacing={5} columnSpacing={1} className="my-10">
+        {loading && (
+          <>
+            {[0, 1, 2].map((i) => (
+              <React.Fragment key={i}>
+                <Grid item container xs={12} sm={7} md={5} lg={4} justifyContent={"center"}>
+                  <Skeleton key={i} variant="rectangular" width={320} height={300} />
+                </Grid>
+              </React.Fragment>
+            ))}
+          </>
+        )}          
+
+          {data && data.tools.edges.length === 0 && (
             <Grid item xs={12} className="flex justify-center items-center">
               <Typography variant="h5" className="font-semibold">
-                {" "}
-                No tools found.{" "}
+                No tools found.
               </Typography>
             </Grid>
           )}
 
           {data &&
             data.tools.edges.map(({ node: tool }: { node: ToolExtended }) => (
-              <Grid item xs={12} sm={7} md={5} lg={4} key={tool.id}>
-                <Link href={`/tools/${tool.id}`} key={tool.id} className="no-underline flex-1">
+              <Grid item container xs={12} sm={7} md={5} lg={4} key={tool.id} justifyContent={"center"}>
+                <Link href={`/tools/${tool.id}`} key={tool.id} className="no-underline">
                   <ToolCard tool={tool} />
                 </Link>
               </Grid>

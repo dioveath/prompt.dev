@@ -6,7 +6,7 @@ import Link from "next/link";
 import React from "react";
 
 import Navbar from "@/components/globals/navbar";
-import { Backdrop, Button, CircularProgress, Container, Grid, TextField, Typography } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Container, Grid, Skeleton, TextField, Typography } from "@mui/material";
 import Footer from "@/sections/footer";
 import { Controller, useForm } from "react-hook-form";
 import PSelect from "@/components/globals/select";
@@ -74,12 +74,12 @@ export default function ToolsPage() {
   } = useForm<FilterProps>({ defaultValues: { search: "", category: "" } });
   const { data, loading, error, fetchMore, refetch } = useQuery(toolsQuery, { variables: { first: PAGE_SIZE, orderBy: "views", order: "desc", search: "", skills: ["null"], published: true } });
   
-  if (loading)
-    return (
-      <Backdrop sx={{ backgroundColor: "#121212", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
+  // if (loading)
+  //   return (
+  //     <Backdrop sx={{ backgroundColor: "#121212", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+  //       <CircularProgress color="inherit" />
+  //     </Backdrop>
+  //   );
 
   if (error)
     return (
@@ -88,7 +88,7 @@ export default function ToolsPage() {
       </Backdrop>
     );
 
-  const { endCursor, hasNextPage } = data.tools.pageInfo;
+  const { endCursor, hasNextPage } = data && data.tools.pageInfo || { endCursor: "", hasNextPage: false };
 
   const onSubmit = async (data: FilterProps) => {
     const skills: string[] | undefined = data.skills?.map((skill: Skill) => skill.id);
@@ -96,6 +96,7 @@ export default function ToolsPage() {
   };
 
   const loadMore = () => {
+    
     fetchMore({
       variables: {
         after: endCursor,
@@ -158,19 +159,29 @@ export default function ToolsPage() {
             </Grid>
             <Grid item xs={12} sm={12} md={3} lg={3}>
               <Button variant="contained" color="primary" fullWidth size="large" type="submit">
-                {" "}
-                Search{" "}
+                Search
               </Button>
             </Grid>
           
         </Grid>
         </form>        
 
-        <Grid container rowSpacing={2} columnSpacing={1} className="my-10">
-          {data.tools.edges.length === 0 && (
+        <Grid container rowSpacing={2} columnSpacing={1} className="my-10" justifyContent={"center"}>
+        {loading && (
+          <>
+            {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+              <React.Fragment key={i}>
+                <Grid item container xs={12} sm={7} md={5} lg={4} justifyContent={"center"}>
+                  <Skeleton key={i} variant="rectangular" width={320} height={300} />
+                </Grid>
+              </React.Fragment>
+            ))}
+          </>
+        )}                    
+
+          {data && data.tools.edges.length === 0 && (
             <Grid item xs={12} className="flex justify-center items-center">
               <Typography variant="h5" className="font-semibold">
-                {" "}
                 No tools found.{" "}
               </Typography>
             </Grid>
@@ -178,8 +189,8 @@ export default function ToolsPage() {
 
           {data &&
             data.tools.edges.map(({ node: tool }: { node: ToolExtended }) => (
-              <Grid item xs={12} sm={7} md={5} lg={4} key={tool.id}>
-                <Link href={`/tools/${tool.id}`} key={tool.id} className="no-underline flex-1">
+              <Grid item container xs={12} sm={7} md={5} lg={4} key={tool.id} justifyContent={"center"}>
+                <Link href={`/tools/${tool.id}`} key={tool.id} className="no-underline">
                   <ToolCard tool={tool} />
                 </Link>
               </Grid>

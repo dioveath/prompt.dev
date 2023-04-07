@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { Avatar, Badge, Button, Card, CardActionArea, CardActions, Grid } from "@mui/material";
 import React from "react";
 import toast from "react-hot-toast";
@@ -29,6 +30,8 @@ const publishToolMutationQuery = gql`
 export default function ToolCardAdmin({ tool }: ToolCardAdminProps) {
   const [deleteTool, { data, loading, error }] = useMutation(deleteMutationQuery);
   const [publishTool, { data: publishData, loading: publishLoading, error: publishError }] = useMutation(publishToolMutationQuery);
+  const { user, isLoading: userLoading, error: userError } = useUser();
+
 
   const handleDelete = async () => {
     await deleteTool({
@@ -77,7 +80,7 @@ export default function ToolCardAdmin({ tool }: ToolCardAdminProps) {
           <Button size="small" startIcon={<MdPreview />} href={`/tools/${tool.id}`}>View</Button>
 
           {/* We'll only allow unpublishing of tool, publishing will be done by superadmin only */}
-          { tool.published && <Button size="small" startIcon={tool.published ? <MdUnpublished/> : <MdPublish />} onClick={handlePublish}> {tool.published ? "Unpublish" : "Publish"} </Button>           }
+          { (tool.published || user?.email === 'prompter.dev@gmail.com') && <Button size="small" startIcon={tool.published ? <MdUnpublished/> : <MdPublish />} onClick={handlePublish}> {tool.published ? "Unpublish" : "Publish"} </Button> }
           
         </CardActions>
       </Grid>

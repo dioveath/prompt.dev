@@ -41,3 +41,24 @@ builder.mutationField('createSkill', (t) =>
         },
     })
 );
+
+builder.mutationField('deleteSkill', (t) =>
+    t.prismaField({
+        type: 'Skill',
+        args: {
+            id: t.arg.id({ required: true }),
+        },
+        resolve: async (_query, _parent, args, ctx, _info) => {
+            const { id } = args;
+            const { user } = await ctx;
+
+            if (!user) throw new Error('Not authenticated');
+
+            return await prisma.skill.delete({
+                where: {
+                    id,
+                },
+            });
+        },
+    })
+);

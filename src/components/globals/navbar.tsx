@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { gql, useQuery } from "@apollo/client";
 import { Link, Skeleton, useTheme } from "@mui/material";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
+import { GoSignIn } from "react-icons/go";
 import { ColorModeContext } from "@/pages/_app";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
@@ -61,6 +62,8 @@ interface NavbarProps {
 function ResponsiveAppBar({ path }: NavbarProps) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [anchorAuthMenu, setAnchorAuthMenu] = React.useState<null | HTMLElement>(null);
+
   const { user } = useUser();
   const { data, loading, error } = useQuery(meQuery, { skip: !user });
   const theme = useTheme();
@@ -80,6 +83,14 @@ function ResponsiveAppBar({ path }: NavbarProps) {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleOpenAuthMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorAuthMenu(event.currentTarget);
+  };
+
+  const handleCloseAuthMenu = () => {
+    setAnchorAuthMenu(null);
   };
 
   return (
@@ -105,7 +116,7 @@ function ResponsiveAppBar({ path }: NavbarProps) {
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -160,7 +171,7 @@ function ResponsiveAppBar({ path }: NavbarProps) {
             ))}
           </Box>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
             {!loading && !data && (
               <Button variant="contained" color="primary" href="/api/auth/login" className="shadow-none">
                 Login
@@ -171,6 +182,39 @@ function ResponsiveAppBar({ path }: NavbarProps) {
                 Sign Up
               </Button>
             )}
+          </Box>
+
+          <Box sx={{ flexGrow: 0, display: { md: "none" } }}>
+            <Tooltip title="Credentials">
+              <IconButton onClick={handleOpenAuthMenu} sx={{ p: 0 }}> <GoSignIn/> </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorAuthMenu}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorAuthMenu)}
+              onClose={handleCloseAuthMenu}
+            >
+              <MenuItem onClick={handleCloseAuthMenu} href={"auth/login"}> 
+                {/* <Link> */}
+                <Typography>Login</Typography>               
+              {/* </Link> */}
+              </MenuItem>
+              <MenuItem onClick={handleCloseAuthMenu} href={"auth/login"}>
+              {/* <Link> */}
+                <Typography>Sign Up</Typography>               
+              {/* </Link>                 */}
+              </MenuItem>
+            </Menu>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -200,7 +244,7 @@ function ResponsiveAppBar({ path }: NavbarProps) {
               onClose={handleCloseUserMenu}
             >
               {settings.map(({ label, href }) => (
-                <Link key={label} href={href} sx={{textDecoration: "none"}}>
+                <Link key={label} href={href} sx={{ textDecoration: "none" }}>
                   <MenuItem onClick={handleCloseUserMenu} href={href}>
                     <Typography textAlign="center">{label}</Typography>
                   </MenuItem>

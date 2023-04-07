@@ -12,11 +12,11 @@ const URL = "https://www.prompters.dev";
 export default function ToolCard({ tool: { id, title, shortDescription, avatar } }: ToolCardProps) {
   const [open, setOpen] = React.useState(false);
   return (
-    <Card sx={{ width: 345 }} className="shadow-sm">
+    <Card sx={{ width: { xs: 300, md: 340 } }} className="shadow-sm">
       <CardMedia
         component="img"
         alt={`${title} logo`}
-        height="180"
+        height="150"
         image={avatar || "/assets/artificial-intelligence.png"}
         sx={avatar ? { objectFit: "cover" } : { objectFit: "contain", padding: "2rem", backgroundColor: "#aaaaaa55" }}
       />

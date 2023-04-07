@@ -45,13 +45,13 @@ export default function TrendingToolsSection() {
         <Typography variant="h6"> Tools that are trending in the community </Typography>
       </div>
 
-      <Grid container rowSpacing={2} columnSpacing={0} className="my-5">
+      <Grid container rowSpacing={5} columnSpacing={1} className="my-5" justifyContent={"center"}>
         {loading && (
           <>
             {[0, 1, 2].map((i) => (
               <React.Fragment key={i}>
-                <Grid item xs={12} sm={7} md={5} lg={4}>
-                  <Skeleton key={i} variant="rectangular" width={300} height={300} className="mx-2" />
+                <Grid item container xs={12} sm={7} md={5} lg={4} justifyContent={"center"}>
+                  <Skeleton key={i} variant="rectangular" width={320} height={300} />
                 </Grid>
               </React.Fragment>
             ))}
@@ -68,8 +68,8 @@ export default function TrendingToolsSection() {
 
         {data &&
           data.tools.edges.map(({ node: tool }: { node: ToolExtended }) => (
-            <Grid item xs={12} sm={7} md={5} lg={4} key={tool.id}>
-              <Link href={`/tools/${tool.id}`} key={tool.id} className="no-underline flex-1">
+            <Grid item container xs={12} sm={7} md={5} lg={4} key={tool.id} justifyContent={"center"}>
+              <Link href={`/tools/${tool.id}`} key={tool.id} className="no-underline">
                 <ToolCard tool={tool} />
               </Link>
             </Grid>
