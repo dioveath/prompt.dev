@@ -51,7 +51,7 @@ const PAGE_SIZE = 10;
 export default function ThreadsList() {
   const { data, loading, error, fetchMore } = useQuery(postsQuery, { variables: { first: PAGE_SIZE } });
   const { user, isLoading: userLoading, error: errorLoading } = useUser();
-  const [open, setOpen] = React.useState(!!!user);
+  const [open, setOpen] = React.useState(!!user);
 
   if (loading)
     return (

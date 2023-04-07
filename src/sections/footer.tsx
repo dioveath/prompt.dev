@@ -11,7 +11,8 @@ export default function Footer() {
               About
             </Typography>
             <Typography variant="body1">
-              This is a place where you can find all the ai tools you need to build your next project. You can also add your own tools to the list.
+              This is a place where you can find all the ai tools you need to build your next big thing. You can also add your own tools to the list. 
+              Also you can join our community to get help from other AI prosumers.
             </Typography>
           </Grid>
           {/* <Grid item xs={12} sm={6} md={8} className="flex flex-col gap-4">

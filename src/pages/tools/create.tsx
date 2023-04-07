@@ -7,6 +7,9 @@ import Navbar from "@/components/globals/navbar";
 import { Container, Button, TextField, Grid } from "@mui/material";
 const Select = dynamic(import("react-select"), { ssr: false });
 import Footer from "@/sections/footer";
+import { ToolCategory } from "@prisma/client";
+import { useRouter } from "next/router";
+import CongratsDialog from "@/sections/tools/congratsdialog";
 
 const createAICategoryQuery = gql`
   mutation CreateTool($title: String!, $description: String, $shortDescription: String, $avatar: String, $website: String!, $categoryId: ID, $ais: [ID!], $skills: [ID!]) {
@@ -57,7 +60,7 @@ type CreateToolProps = {
   shortDescription?: string;
   description?: string;
   avatar?: string;
-  categoryId?: string;
+  category?: ToolCategory;
   website: string;
   ais?: string[];
   skills?: string[];
@@ -75,21 +78,23 @@ export default function CreateAIPage() {
   const { data: aisData, loading: aisLoading, error: aisError } = useQuery(aisQuery);
   const { data: skillsData, loading: skillsLoading, error: skillsError } = useQuery(skillsQuery);
   const { data: toolCategoryData, loading: toolCategoryLoading, error: toolCategoryError } = useQuery(toolCategoryQuery);
+  const [openCongratsDialog, setOpenCongratsDialog] = React.useState(false);
 
-  const onSubmit: SubmitHandler<CreateToolProps> = (data) => {
-    const { title, shortDescription, description, avatar, website, categoryId, ais, skills } = data;
+  const onSubmit: SubmitHandler<CreateToolProps> = async (data) => {
+    const { title, shortDescription, description, avatar, website, category, ais, skills } = data;
 
     let aiIds: any = ais?.map((ai: any) => ai.id);
     let skillIds: any = skills?.map((skill: any) => skill.id);
 
     try {
-      toast.promise(createAI({ variables: { title, shortDescription, description, avatar, website, categoryId, ais: aiIds, skills: skillIds } }), {
+      await toast.promise(createAI({ variables: { title, shortDescription, description, avatar, website, categoryId: category?.id || undefined, ais: aiIds, skills: skillIds } }), {
         loading: "Creating AI Tool 🔃🔃🔃",
         success: "AI Tool created successfully! 🎉🎉🎉",
         error: "Error creating AI Tool 😢😢😢, Please try again later",
       });
-      console.log(data);
+      setOpenCongratsDialog(true);
     } catch (error) {
+      console.log(error);
       toast.error("Error creating AI Tool😢😢😢");
     }
   };
@@ -160,7 +165,7 @@ export default function CreateAIPage() {
                     Tool Categories
                   </label>
                   <Controller
-                    name="categoryId"
+                    name="category"
                     control={control}
                     render={({ field }) => (
                       <Select
@@ -174,10 +179,9 @@ export default function CreateAIPage() {
                   />
                 </Grid>
               </Grid>
-
+              <CongratsDialog open={openCongratsDialog} setOpen={setOpenCongratsDialog}/>
               <Button type="submit" variant="contained">
-                {" "}
-                Submit Tool{" "}
+                Submit Tool
               </Button>
             </form>
           </Grid>

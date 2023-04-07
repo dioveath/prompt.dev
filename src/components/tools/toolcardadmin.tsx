@@ -46,9 +46,9 @@ export default function ToolCardAdmin({ tool }: ToolCardAdminProps) {
         },
       }),
       {
-        loading: "Publishing Tool 🔃🔃🔃👨",
-        success: "Tool Published 🎉🎉🎉 🚀🚀🚀",
-        error: "Error Publishing Tool 📛📛📛",
+        loading: "UnPublishing Tool 🔃🔃🔃",
+        success: "Tool UnPublished 🔻🔻🔻",
+        error: "Error UnPublishing Tool 📛📛📛",
       }
     );
   };
@@ -75,9 +75,10 @@ export default function ToolCardAdmin({ tool }: ToolCardAdminProps) {
         <CardActions className="gap-4">
           <Button size="small" startIcon={<MdShare />}>Share</Button>
           <Button size="small" startIcon={<MdPreview />} href={`/tools/${tool.id}`}>View</Button>
-          <Button size="small" startIcon={tool.published ? <MdUnpublished/> : <MdPublish />} onClick={handlePublish}>
-            {tool.published ? "Unpublish" : "Publish"}
-          </Button>
+
+          {/* We'll only allow unpublishing of tool, publishing will be done by superadmin only */}
+          { tool.published && <Button size="small" startIcon={tool.published ? <MdUnpublished/> : <MdPublish />} onClick={handlePublish}> {tool.published ? "Unpublish" : "Publish"} </Button>           }
+          
         </CardActions>
       </Grid>
     </Card>
