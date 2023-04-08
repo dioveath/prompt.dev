@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PostCard from "@/components/globals/postcard";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { Backdrop, Button, CircularProgress, Container, Drawer, Grid, TablePagination, Typography } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Container, Drawer, Grid, Skeleton, TablePagination, Typography } from "@mui/material";
 import Navbar from "@/components/globals/navbar";
 import Footer from "@/sections/footer";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -51,14 +51,12 @@ const PAGE_SIZE = 10;
 export default function ThreadsList() {
   const { data, loading, error, fetchMore } = useQuery(postsQuery, { variables: { first: PAGE_SIZE } });
   const { user, isLoading: userLoading, error: errorLoading } = useUser();
-  const [open, setOpen] = React.useState(!!user);
 
-  if (loading)
-    return (
-      <Backdrop sx={{ backgroundColor: "#efefef22", zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
+  const [open, setOpen] = React.useState(false);
+
+  useEffect(() => { 
+    setOpen(Boolean(!user));
+  }, [user]);  
 
   if (error)
     return (
@@ -67,9 +65,9 @@ export default function ThreadsList() {
       </Backdrop>
     );
 
-  const { endCursor, hasNextPage } = data.posts.pageInfo;
+  const { endCursor, hasNextPage } = data && data.posts.pageInfo || { endCursor: "", hasNextPage: false };
 
-  const curatedPosts = data.posts.edges.map((edge: any) => {
+  const curatedPosts = data?.posts.edges.map((edge: any) => {
     const post: any = edge.node;
     const { skills, ais, tools } = post;
     const curatedSkills = skills.map((skill: any) => skill.skill);
@@ -102,8 +100,27 @@ export default function ThreadsList() {
         </Typography>
 
         <Grid container className="gap-4">
-          {curatedPosts?.map((post: any) => (
-            <PostCard key={post.id} {...post} />
+          { loading && (<>
+            {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+              <React.Fragment key={i}>
+                <Grid item container justifyContent={"center"}>
+                  <Skeleton variant="rectangular" width={"100%"} height={120} />
+                </Grid>
+              </React.Fragment>
+            ))}
+          </>)}
+
+          {error && (<Grid item container justifyContent={"center"}>
+            <Typography variant="h5" className="my-4">
+              Error: {error.message}
+            </Typography>
+          </Grid>)}
+
+
+          {curatedPosts && curatedPosts?.map((post: any) => (
+            <Grid key={post.id} item container justifyContent={"center"}>
+              <PostCard {...post} />
+            </Grid>
           ))}
         </Grid>
 
@@ -113,7 +130,7 @@ export default function ThreadsList() {
           </Button>
         </div>
 
-        <div className={`fixed left-0 bottom-0 bg-gray-800/80 w-full shadow-lg ${!open ? "hidden" : ""}` }>
+        <div className={`fixed left-0 bottom-0 bg-gray-800/80 w-full shadow-lg ${open ? "" : "hidden"}` }>
           <Container sx={{ padding: "40px 0px", backgroundColor: "transparent", position: "relative" }}>
             <Button sx={{ position: "absolute", top: "10px", right: "10px", fontSize: "20px", fontWeight: "900", color: "white" }} onClick={() => setOpen(false)}> X </Button>
             <Typography variant="h5" className="mb-4 text-white">

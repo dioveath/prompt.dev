@@ -52,11 +52,12 @@ builder.mutationField('deleteSkill', (t) =>
             const { id } = args;
             const { user } = await ctx;
 
+            if(!id) throw new Error('No id provided');
             if (!user) throw new Error('Not authenticated');
 
             return await prisma.skill.delete({
                 where: {
-                    id,
+                    id: id.toString(),
                 },
             });
         },

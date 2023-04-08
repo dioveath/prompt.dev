@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { gql, useQuery } from "@apollo/client";
 import { Link, Skeleton, useTheme } from "@mui/material";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
+import { FaUserCircle } from "react-icons/fa";
 import { GoSignIn } from "react-icons/go";
 import { ColorModeContext } from "@/pages/_app";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -184,9 +185,9 @@ function ResponsiveAppBar({ path }: NavbarProps) {
             )}
           </Box>
 
-          <Box sx={{ flexGrow: 0, display: { md: "none" } }}>
+          <Box sx={{ flexGrow: 0, display: { xs: user ? "none": "block", md: "none" } }}>
             <Tooltip title="Credentials">
-              <IconButton onClick={handleOpenAuthMenu} sx={{ p: 0 }}> <GoSignIn/> </IconButton>
+              <IconButton onClick={handleOpenAuthMenu} sx={{ p: 0 }}> <FaUserCircle/> </IconButton>
             </Tooltip>
             <Menu
               sx={{ mt: "45px" }}
