@@ -8,7 +8,8 @@ const nextConfig = {
   images: {
     domains: [
       'lh3.googleusercontent.com',
-      'avatars.githubusercontent.com'
+      'avatars.githubusercontent.com',
+      'api.producthunt.com'
     ],
   },
   headers: async () => [{
