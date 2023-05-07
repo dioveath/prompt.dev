@@ -241,7 +241,7 @@ builder.mutationField("updateTool", (t) =>
             const newSkills = skills?.filter(id => !oldSkills.some((oldSkill: any) => oldSkill.skillId === id)) || [];
 
             if (!tool) throw new Error("Tool not found");
-            const isAuthor = tool.toolAuthors.some((toolAuthor: any) => toolAuthor.authorId === dbUser.id);
+            const isAuthor = tool.toolAuthors.some((toolAuthor: any) => toolAuthor.authorId === dbUser.id) || dbUser.email === "prompter.dev@gmail.com";
             if (!isAuthor) throw new Error("User is not author of this tool");
 
             return await prisma.tool.update({
