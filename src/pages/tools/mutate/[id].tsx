@@ -258,7 +258,7 @@ export const getServerSideProps = withPageAuthRequired({
         notFound: true,
       };
 
-    if (!tool.toolAuthors.some((author) => author.authorId === userFromDB?.id)) {
+    if (!tool.toolAuthors.some((author) => author.authorId === userFromDB?.id) && userFromDB?.email !== "prompter.dev@gmail.com") {
       return {
         redirect: {
           destination: "/tools",
